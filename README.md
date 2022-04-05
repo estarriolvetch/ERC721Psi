@@ -7,6 +7,26 @@ Powered by Chainlink's VRF V2, ERC721Psi comes with an extension that can batch 
 
 Litepaper: https://medium.com/@medievaldao/erc721psi-a-truly-scalable-nft-standard-for-low-gas-on-chain-applications-and-randomized-metadata-c25c9e8ac8a8
 
+## Usage
+```
+pragma solidity ^0.8.0;
+
+import "./ERC721Psi.sol";
+
+contract Adventurer is ERC721Psi {
+
+    constructor() 
+        ERC721Psi ("Adventurer", "ADVENTURER"){
+    }
+
+    function mint(uint256 quantity) external payable {
+        // _safeMint's second argument now takes in a quantity, not a tokenId. (same as ERC721A)
+        _safeMint(msg.sender, quantity);
+    }
+
+}
+```
+
 ## Random Seed Extension
 The random seed extensions provide an easy way for NFT projects to create on-chain randomized metata at the individual token level. The random seed extensions uses Chainlink's VRF V2 as its source of randomness. Each token comes with its own unique seed that can be used to derived its attributes.
 ```solidity

@@ -14,8 +14,7 @@ jobs:
           node-version: "16.x"
           registry-url: "https://registry.npmjs.org"
       - run: npm install -g yarn
-      - run: yarn
-      - run: npx hardhat test  
-      - run: yarn npm publish
+      - run: yarn  
+      - run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
