@@ -12,7 +12,6 @@
 pragma solidity ^0.8.0;
 
 import "./BitScan.sol";
-import "hardhat/console.sol";
 
 
 /**
