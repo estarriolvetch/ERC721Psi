@@ -50,7 +50,7 @@ There are two types of random seed extensions with different schemes of requesti
 - `ERC721PsiRandomSeedReveal`: The randomness is requested when the `_reveal()` function is called. This function is usually called by the project owner to reveal the tokens. Everytime `_reveal()` is called, it will reveal the random seeds of all the tokens minted since the last reveal.
 
 ## Considerations
-It is important to realize that `balanceOf`, `totalSupply`, `tokenByIndex`, and `tokenOfOwnerByIndex` in ERC721Psi are not designed to be gas efficient since they are mostly used by front end only. By doing so, we are able to reduce the storage usage and thus minimize the gas consumption for the rest of the function.
+It is important to realize that `balanceOf`, `totalSupply`, `tokenByIndex`, and `tokenOfOwnerByIndex` in ERC721Psi are not designed to be gas efficient since they are mostly used by front end only. By doing so, we are able to reduce the storage usage and thus minimize the gas consumption for the rest of the functions.
 
 If tracking `balanceOf` on-chain is important for your application, please use the ERC721PsiTrackBalance extension (coming soon).
 
@@ -66,3 +66,6 @@ PRs on documentations, test cases, and any contract improvemetns are welcomed!!
 If your projects use ERC721Psi, we'd like know more about it!
 Feel free to DM [0xEstarriol](https://twitter.com/0xEstarriol) to share your project.
 - [Medieval Adventurer](https://twitter.com/DaoMedieval)
+
+
+[![](https://assets-global.website-files.com/5e8c4efdc725c62673645017/5e984342430c977175a68934_Secured%20By%20-%20Badge%20Blue.svg)](https://chain.link/)

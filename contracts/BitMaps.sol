@@ -12,6 +12,7 @@
 pragma solidity ^0.8.0;
 
 import "./BitScan.sol";
+import "hardhat/console.sol";
 
 
 /**
@@ -82,19 +83,31 @@ library BitMaps {
         uint256 bucket = index >> 8;
         uint256 bucketIndex = (index & 0xff);
         uint256 offset = 0xff ^ bucketIndex;
-        while(true) {
-            uint256 bb = bitmap._data[bucket];
-            bb = bb >> offset;
-
-            if(bb > 0) {
-                unchecked {
-                    return (bucket << 8) | (bucketIndex -  bb.bitScanForward256());    
-                }
-            } else {
-                require(bucket > 0, "BitMaps: The set bit before the index doesn't exist.");
-                unchecked {
-                    bucket--;
-                }
+        uint256 bb = bitmap._data[bucket];
+        bb = bb >> offset;
+        if(bb > 0) {
+            unchecked {
+                return (bucket << 8) | (bucketIndex -  bb.bitScanForward256());    
+            }
+        } else {
+            require(bucket > 0, "BitMaps: The set bit before the index doesn't exist.");
+            unchecked {
+                bucket--;
+                bucketIndex = 255;
+                offset = 0;
+            }
+            while(true) {
+                bb = bitmap._data[bucket];
+                if(bb > 0) {
+                    unchecked {
+                        return (bucket << 8) | (bucketIndex -  bb.bitScanForward256());    
+                    }
+                } else {
+                    require(bucket > 0, "BitMaps: The set bit before the index doesn't exist.");
+                    unchecked {
+                        bucket--;
+                    }
+                } 
             }
         }
     }

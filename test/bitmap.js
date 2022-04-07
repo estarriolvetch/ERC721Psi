@@ -166,6 +166,12 @@ describe('BitMap', function (accounts) {
         await this.bitmap.set("1000");
         await this.bitmap.set("100");
         await this.bitmap.set("10");
+        await this.bitmap.set("0");
+
+        assert.equal(
+          (await this.bitmap.scanForward("355")).toString(), 
+          "100"
+        );
         
         assert.equal(
           (await this.bitmap.scanForward("99")).toString(), 
