@@ -66,6 +66,3 @@ PRs on documentations, test cases, and any contract improvemetns are welcomed!!
 If your projects use ERC721Psi, we'd like know more about it!
 Feel free to DM [0xEstarriol](https://twitter.com/0xEstarriol) to share your project.
 - [Medieval Adventurer](https://twitter.com/DaoMedieval)
-
-
-[![](https://assets-global.website-files.com/5e8c4efdc725c62673645017/5e984342430c977175a68934_Secured%20By%20-%20Badge%20Blue.svg)](https://chain.link/)
