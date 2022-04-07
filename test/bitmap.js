@@ -168,10 +168,12 @@ describe('BitMap', function (accounts) {
         await this.bitmap.set("10");
         await this.bitmap.set("0");
 
-        assert.equal(
-          (await this.bitmap.scanForward("355")).toString(), 
-          "100"
-        );
+        for(i=100; i < 600; i++){
+          assert.equal(
+            (await this.bitmap.scanForward("255")).toString(), 
+            "100"
+          );
+        }
         
         assert.equal(
           (await this.bitmap.scanForward("99")).toString(), 
@@ -181,6 +183,11 @@ describe('BitMap', function (accounts) {
         assert.equal(
           (await this.bitmap.scanForward("500")).toString(), 
           "100"
+        );
+
+        assert.equal(
+          (await this.bitmap.scanForward("2000")).toString(), 
+          "1000"
         );
 
         expect(this.bitmap.scanForward("5")).to.be.revertedWith(

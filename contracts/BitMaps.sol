@@ -81,31 +81,32 @@ library BitMaps {
      */
     function scanForward(BitMap storage bitmap, uint256 index) internal view returns (uint256) {
         uint256 bucket = index >> 8;
+
+        // index within the bucket
         uint256 bucketIndex = (index & 0xff);
-        uint256 offset = 0xff ^ bucketIndex;
+
+        // load a bitboard from the bitmap.
         uint256 bb = bitmap._data[bucket];
-        bb = bb >> offset;
+
+        // offset the bitboard to scan from `bucketIndex`.
+        bb = bb >> (0xff ^ bucketIndex); // bb >> (255 - bucketIndex)
+        
         if(bb > 0) {
             unchecked {
                 return (bucket << 8) | (bucketIndex -  bb.bitScanForward256());    
             }
         } else {
-            require(bucket > 0, "BitMaps: The set bit before the index doesn't exist.");
-            unchecked {
-                bucket--;
-                bucketIndex = 255;
-                offset = 0;
-            }
             while(true) {
+                require(bucket > 0, "BitMaps: The set bit before the index doesn't exist.");
+                unchecked {
+                    bucket--;
+                }
+                // No offset. Always scan from the least significiant bit now.
                 bb = bitmap._data[bucket];
+                
                 if(bb > 0) {
                     unchecked {
-                        return (bucket << 8) | (bucketIndex -  bb.bitScanForward256());    
-                    }
-                } else {
-                    require(bucket > 0, "BitMaps: The set bit before the index doesn't exist.");
-                    unchecked {
-                        bucket--;
+                        return (bucket << 8) | (255 -  bb.bitScanForward256());    
                     }
                 } 
             }
