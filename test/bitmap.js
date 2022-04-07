@@ -170,7 +170,7 @@ describe('BitMap', function (accounts) {
 
         for(i=100; i < 600; i++){
           assert.equal(
-            (await this.bitmap.scanForward("255")).toString(), 
+            (await this.bitmap.scanForward(i)).toString(), 
             "100"
           );
         }
