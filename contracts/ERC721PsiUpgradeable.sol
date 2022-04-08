@@ -356,6 +356,9 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
 
         _owners[tokenIdBatchHead] = to;
         _batchHead.set(tokenIdBatchHead);
+
+        // Reentrancy Protection
+        require(tokenIdBatchHead == _minted);
         _minted += quantity;
 
         _afterTokenTransfers(address(0), to, tokenIdBatchHead, quantity);

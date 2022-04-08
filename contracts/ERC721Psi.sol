@@ -349,6 +349,9 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerab
 
         _owners[tokenIdBatchHead] = to;
         _batchHead.set(tokenIdBatchHead);
+
+        // Reentrancy Protection
+        require(tokenIdBatchHead == _minted);
         _minted += quantity;
 
         _afterTokenTransfers(address(0), to, tokenIdBatchHead, quantity);
