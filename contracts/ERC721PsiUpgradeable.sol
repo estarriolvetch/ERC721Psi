@@ -360,14 +360,14 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         
         _beforeTokenTransfers(address(0), to, tokenIdBatchHead, quantity);
         _minted += quantity;
+        _owners[tokenIdBatchHead] = to;
+        _batchHead.set(tokenIdBatchHead);
+        _afterTokenTransfers(address(0), to, tokenIdBatchHead, quantity);
+        
+        // Emit events
         for(uint256 tokenId=tokenIdBatchHead;tokenId < tokenIdBatchHead + quantity; tokenId++){
             emit Transfer(address(0), to, tokenId);
         } 
-        
-        _owners[tokenIdBatchHead] = to;
-        _batchHead.set(tokenIdBatchHead);
-
-        _afterTokenTransfers(address(0), to, tokenIdBatchHead, quantity);
     }
 
 

@@ -352,14 +352,14 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerab
         
         _beforeTokenTransfers(address(0), to, tokenIdBatchHead, quantity);
         _minted += quantity;
+        _owners[tokenIdBatchHead] = to;
+        _batchHead.set(tokenIdBatchHead);
+        _afterTokenTransfers(address(0), to, tokenIdBatchHead, quantity);
+        
+        // Emit events
         for(uint256 tokenId=tokenIdBatchHead;tokenId < tokenIdBatchHead + quantity; tokenId++){
             emit Transfer(address(0), to, tokenId);
         } 
-        
-        _owners[tokenIdBatchHead] = to;
-        _batchHead.set(tokenIdBatchHead);
-
-        _afterTokenTransfers(address(0), to, tokenIdBatchHead, quantity);
     }
 
 
