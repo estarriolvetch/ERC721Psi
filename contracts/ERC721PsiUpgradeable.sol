@@ -23,6 +23,7 @@ import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./BitMaps.sol";
+import "hardhat/console.sol";
 
 
 contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable, 
@@ -280,7 +281,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
     ) internal virtual {
         _transfer(from, to, tokenId);
         require(
-            _checkOnERC721Received(from, to, tokenId, _data),
+            _checkOnERC721Received(from, to, tokenId, 1,_data),
             "ERC721Psi: transfer to non ERC721Receiver implementer"
         );
     }
@@ -339,27 +340,32 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         uint256 quantity,
         bytes memory _data
     ) internal virtual {
+        uint256 startTokenId = _minted;
+        _mint(to, quantity);
+        require(
+            _checkOnERC721Received(address(0), to, startTokenId, quantity, _data),
+            "ERC721Psi: transfer to non ERC721Receiver implementer"
+        );
+    }
+
+
+    function _mint(
+        address to,
+        uint256 quantity
+    ) internal virtual {
         uint256 tokenIdBatchHead = _minted;
         
         require(quantity > 0, "ERC721Psi: quantity must be greater 0");
         require(to != address(0), "ERC721Psi: mint to the zero address");
         
         _beforeTokenTransfers(address(0), to, tokenIdBatchHead, quantity);
-        for(uint256 i=0;i < quantity; i++){
-            uint256 tokenId = tokenIdBatchHead + i;
+        _minted += quantity;
+        for(uint256 tokenId=tokenIdBatchHead;tokenId < tokenIdBatchHead + quantity; tokenId++){
             emit Transfer(address(0), to, tokenId);
-            require(
-                _checkOnERC721Received(address(0), to, tokenId, _data),
-                "ERC721Psi: transfer to non ERC721Receiver implementer"
-            );
-        }
-
+        } 
+        
         _owners[tokenIdBatchHead] = to;
         _batchHead.set(tokenIdBatchHead);
-
-        // Reentrancy Protection
-        require(tokenIdBatchHead == _minted);
-        _minted += quantity;
 
         _afterTokenTransfers(address(0), to, tokenIdBatchHead, quantity);
     }
@@ -429,37 +435,34 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
      *
      * @param from address representing the previous owner of the given token ID
      * @param to target address that will receive the tokens
-     * @param tokenId uint256 ID of the token to be transferred
+     * @param startTokenId uint256 the first ID of the tokens to be transferred
+     * @param quantity uint256 amount of the tokens to be transfered.
      * @param _data bytes optional data to send along with the call
-     * @return bool whether the call correctly returned the expected magic value
+     * @return r bool whether the call correctly returned the expected magic value
      */
     function _checkOnERC721Received(
         address from,
         address to,
-        uint256 tokenId,
+        uint256 startTokenId,
+        uint256 quantity,
         bytes memory _data
-    ) private returns (bool) {
+    ) private returns (bool r) {
         if (to.isContract()) {
-            try
-                IERC721Receiver(to).onERC721Received(
-                    _msgSender(),
-                    from,
-                    tokenId,
-                    _data
-                )
-            returns (bytes4 retval) {
-                return retval == IERC721Receiver.onERC721Received.selector;
-            } catch (bytes memory reason) {
-                if (reason.length == 0) {
-                    revert(
-                        "ERC721Psi: transfer to non ERC721Receiver implementer"
-                    );
-                } else {
-                    assembly {
-                        revert(add(32, reason), mload(reason))
+            r = true;
+            for(uint256 tokenId = startTokenId; tokenId < startTokenId + quantity; tokenId++){
+                try IERC721Receiver(to).onERC721Received(_msgSender(), from, tokenId, _data) returns (bytes4 retval) {
+                    r = r && retval == IERC721Receiver.onERC721Received.selector;
+                } catch (bytes memory reason) {
+                    if (reason.length == 0) {
+                        revert("ERC721Psi: transfer to non ERC721Receiver implementer");
+                    } else {
+                        assembly {
+                            revert(add(32, reason), mload(reason))
+                        }
                     }
                 }
             }
+            return r;
         } else {
             return true;
         }
