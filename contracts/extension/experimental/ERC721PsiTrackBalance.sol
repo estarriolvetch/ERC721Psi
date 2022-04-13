@@ -56,7 +56,7 @@ abstract contract ERC721PsiTrackBalance is ERC721Psi {
         }
 
         if(to != address(0)){
-            _balance[from] += quantity;
+            _balance[to] += quantity;
         }
         super._afterTokenTransfers(from, to, startTokenId, quantity);
     }
