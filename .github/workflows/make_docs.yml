@@ -1,7 +1,7 @@
 name: Build Documentation
 on:
   push:
-    branches: [ main ]
+    branches: [ docs ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,3 +16,8 @@ jobs:
           architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
       - run: pipenv sync
         working-directory: ./docs
+      - name: build the documentation
+        run: pipenv run make html
+        working-directory: ./docs
+      
+
