@@ -19,6 +19,8 @@ jobs:
       - name: build the documentation
         run: pipenv run make html
         working-directory: ./docs
+      - run: touch .nojekyll
+        working-directory: ./docs/build/html
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.3.0
         with:
