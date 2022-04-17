@@ -1,6 +1,7 @@
 # ERC721Psi
 [![Node.js CI](https://github.com/estarriolvetch/ERC721Psi/actions/workflows/node.js.yml/badge.svg)](https://github.com/estarriolvetch/ERC721Psi/actions/workflows/node.js.yml)
 [![Publish Package to npmjs](https://github.com/estarriolvetch/ERC721Psi/actions/workflows/deploy_npm.yml/badge.svg)](https://github.com/estarriolvetch/ERC721Psi/actions/workflows/deploy_npm.yml)
+[![npm version](https://badge.fury.io/js/erc721psi.svg)](https://www.npmjs.com/package/erc721psi)
 
 ERC721Psi is an ERC721 compilant implementation designed for scalable and gas-efficient on-chain application with built-in randomized metadata generation. Inspired by AzukiZen's awesome ERC721A, ERC721Psi also provides batch minting at a fixed gas cost. However, ERC721Psi manages to solve the [scaling issue of token transfer](https://github.com/chiru-labs/ERC721A/issues/145) through the mathematical power of the [de Bruijn sequence](https://en.wikipedia.org/wiki/De_Bruijn_sequence).
 
