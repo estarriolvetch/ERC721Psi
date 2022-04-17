@@ -19,5 +19,10 @@ jobs:
       - name: build the documentation
         run: pipenv run make html
         working-directory: ./docs
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: docs/build/html # The folder the action should deploy.
       
 
