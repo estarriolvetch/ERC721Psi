@@ -11,12 +11,31 @@
  */
 pragma solidity ^0.8.0;
 
-import "../../BitMaps.sol";
-import "../../ERC721Psi.sol";
+import "../BitMaps.sol";
+import "../ERC721Psi.sol";
 
 
-abstract contract ERC721PsiTrackBalance is ERC721Psi {
-    mapping(address => uint256) _balance;
+/**
+    @dev This extension follows the AddressData format of ERC721A, so
+    it can be a dropped-in replacement for the contract that requires AddressData
+*/ 
+abstract contract ERC721PsiAddressData is ERC721Psi {
+    // Mapping owner address to address data
+    mapping(address => AddressData) _addressData;
+
+    // Compiler will pack this into a single 256bit word.
+    struct AddressData {
+        // Realistically, 2**64-1 is more than enough.
+        uint64 balance;
+        // Keeps track of mint count with minimal overhead for tokenomics.
+        uint64 numberMinted;
+        // Keeps track of burn count with minimal overhead for tokenomics.
+        uint64 numberBurned;
+        // For miscellaneous variable(s) pertaining to the address
+        // (e.g. number of whitelist mint slots used).
+        // If there are multiple variables, please pack them into a uint64.
+        uint64 aux;
+    }
 
 
     /**
@@ -30,7 +49,7 @@ abstract contract ERC721PsiTrackBalance is ERC721Psi {
         returns (uint) 
     {
         require(owner != address(0), "ERC721Psi: balance query for the zero address");
-        return _balance[owner];
+        return uint256(_addressData[owner].balance);   
     }
 
     /**
@@ -51,12 +70,21 @@ abstract contract ERC721PsiTrackBalance is ERC721Psi {
         uint256 startTokenId,
         uint256 quantity
     ) internal override virtual {
+        require(quantity < 2 ** 64);
+        uint64 _quantity = uint64(quantity);
+
         if(from != address(0)){
-            _balance[from] -= quantity;
+            _addressData[from].balance -= _quantity;
+        } else {
+            // Mint
+            _addressData[to].numberMinted += _quantity;
         }
 
         if(to != address(0)){
-            _balance[to] += quantity;
+            _addressData[to].balance += _quantity;
+        } else {
+            // Burn
+            _addressData[to].numberBurned -= _quantity;
         }
         super._afterTokenTransfers(from, to, startTokenId, quantity);
     }
