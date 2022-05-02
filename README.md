@@ -11,6 +11,8 @@ Powered by Chainlink's VRF V2, ERC721Psi comes with an extension that can batch 
 Litepaper: https://medium.com/@medievaldao/erc721psi-a-truly-scalable-nft-standard-for-low-gas-on-chain-applications-and-randomized-metadata-c25c9e8ac8a8
 
 Slides: https://www.slideshare.net/EstarriolVetch/erc721psi
+
+Docs: https://estarriolvetch.github.io/ERC721Psi/
 ## Installaion
 ### npm
 ```
