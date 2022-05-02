@@ -11,7 +11,7 @@
  */
 pragma solidity ^0.8.0;
 
-import "../BitMaps.sol";
+import "solidity-bits/contracts/BitMaps.sol";
 import "../ERC721Psi.sol";
 
 

@@ -21,7 +21,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/StorageSlot.sol";
-import "./BitMaps.sol";
+import "solidity-bits/contracts/BitMaps.sol";
 
 
 contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable {

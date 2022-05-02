@@ -14,7 +14,7 @@ pragma solidity ^0.8.0;
 
 
 import "../ERC721PsiUpgradeable.sol";
-import "../BitMaps.sol";
+import "solidity-bits/contracts/BitMaps.sol";
 
 
 abstract contract ERC721PsiBatchMetaDataUpgradeable is ERC721PsiUpgradeable {

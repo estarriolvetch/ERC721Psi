@@ -8548,6 +8548,11 @@ solidity-ast@^0.4.15:
   resolved "https://registry.yarnpkg.com/solidity-ast/-/solidity-ast-0.4.30.tgz#402d8277311d6680c786f756ba27e1c19f809293"
   integrity sha512-3xsQIbZEPx6w7+sQokuOvk1RkMb5GIpuK0GblQDIH6IAkU4+uyJQVJIRNP+8KwhzkViwRKq0hS4zLqQNLKpxOA==
 
+solidity-bits@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/solidity-bits/-/solidity-bits-0.1.0.tgz#04a69283977c7b7f809b52e883ced5774e0a3241"
+  integrity sha512-uXoTDTfAeR9xw2xPrGZGd9wraHRW2h6ncrqQGY1kxUDVt8ULQZApBMHnm3sVHzkIujFDzxoz+m6qTagE0PVYAw==
+
 source-map-resolve@^0.5.0:
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/source-map-resolve/-/source-map-resolve-0.5.3.tgz#190866bece7553e1f8f267a2ee82c606b5509a1a"

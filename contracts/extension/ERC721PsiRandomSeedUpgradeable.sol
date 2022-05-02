@@ -16,7 +16,6 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 
 import "../interface/IERC721RandomSeed.sol";
 
-import "../BitMaps.sol";
 import "./ERC721PsiBatchMetaDataUpgradeable.sol";
 
 

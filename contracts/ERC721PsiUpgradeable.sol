@@ -21,9 +21,7 @@ import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-
-import "./BitMaps.sol";
-import "hardhat/console.sol";
+import "solidity-bits/contracts/BitMaps.sol";
 
 
 contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable, 
