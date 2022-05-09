@@ -84,7 +84,7 @@ abstract contract ERC721PsiAddressDataUpgradeable is ERC721PsiUpgradeable {
             _addressData[to].balance += _quantity;
         } else {
             // Burn
-            _addressData[to].numberBurned -= _quantity;
+            _addressData[from].numberBurned += _quantity;
         }
         super._afterTokenTransfers(from, to, startTokenId, quantity);
     }
