@@ -91,13 +91,9 @@ abstract contract ERC721PsiRandomSeed is IERC721RandomSeed, ERC721PsiBatchMetaDa
     function _subscriptionId() internal virtual returns (uint64);
 
 
-    function _processRandomnessRequest(uint256 requestId, uint256 tokenIdHead) internal {
+    function _processRandomnessRequest(uint256 requestId, uint256 tokenIdHead) internal virtual {}
 
-    }
-
-    function _processRandomnessFulfillment(uint256 requestId, uint256 tokenIdHead, uint256 randomness) internal {
-
-    }
+    function _processRandomnessFulfillment(uint256 requestId, uint256 tokenIdHead, uint256 randomness) internal virtual {}
 
     /**
         @dev Return the random seed of `tokenId`.

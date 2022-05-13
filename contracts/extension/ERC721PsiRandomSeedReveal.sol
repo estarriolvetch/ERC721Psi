@@ -128,12 +128,8 @@ abstract contract ERC721PsiRandomSeedReveal is IERC721RandomSeed, ERC721PsiBatch
      */
     function _subscriptionId() internal virtual returns (uint64);
 
-    function _processRandomnessRequest(uint256 requestId, uint256 genId) internal {
+    function _processRandomnessRequest(uint256 requestId, uint256 genId) internal virtual {}
 
-    }
-
-    function _processRandomnessFulfillment(uint256 requestId, uint256 genId, uint256 randomness) internal {
-
-    }
+    function _processRandomnessFulfillment(uint256 requestId, uint256 genId, uint256 randomness) internal virtual {}
 }
 
