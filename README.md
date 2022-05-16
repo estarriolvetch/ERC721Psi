@@ -66,7 +66,7 @@ If tracking `balanceOf` on-chain is important for your application, please use t
 ## Contributors
 PRs on documentations, test cases, and any contract improvemetns are welcomed!!
 - [madeinfree](https://github.com/madeinfree)
-
+- [lucaventura](https://github.com/lucaventura)
 ## Projects using ERC721Psi
 If your projects use ERC721Psi, we'd like know more about it!
 Feel free to DM [0xEstarriol](https://twitter.com/0xEstarriol) to share your project.
