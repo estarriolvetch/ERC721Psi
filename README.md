@@ -70,5 +70,5 @@ PRs on documentations, test cases, and any contract improvemetns are welcomed!!
 ## Projects using ERC721Psi
 If your projects use ERC721Psi, we'd like know more about it!
 Feel free to DM [0xEstarriol](https://twitter.com/0xEstarriol) to share your project.
-- [Medieval Adventurer](https://twitter.com/DaoMedieval)
-- [Haruna Future](https://twitter.com/HarunaNft)
+- Medieval Adventurer: [twitter]((https://twitter.com/DaoMedieval)), [opensea](https://opensea.io/collection/medieval-adventurer/)
+- Haruna Future: [twitter](https://twitter.com/HarunaNft), [opensea](https://opensea.io/collection/harunafutureofficial)
