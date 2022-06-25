@@ -4,6 +4,9 @@
 [![Build Documentation](https://github.com/estarriolvetch/ERC721Psi/actions/workflows/make_docs.yml/badge.svg)](https://github.com/estarriolvetch/ERC721Psi/actions/workflows/make_docs.yml)
 [![npm version](https://badge.fury.io/js/erc721psi.svg)](https://www.npmjs.com/package/erc721psi)
 
+**ERC721Psi is releasd under MIT opensource licence and free to use. If you need commercial support/service regarding ERC721Psi, feel free to contact [ctor.xyz](https://ctor.xyz)**
+
+
 ERC721Psi is an ERC721 compilant implementation designed for scalable and gas-efficient on-chain application with built-in randomized metadata generation. Inspired by AzukiZen's awesome ERC721A, ERC721Psi also provides batch minting at a fixed gas cost. However, ERC721Psi manages to solve the [scaling issue of token transfer](https://github.com/chiru-labs/ERC721A/issues/145) through the mathematical power of the [de Bruijn sequence](https://en.wikipedia.org/wiki/De_Bruijn_sequence).
 
 Powered by Chainlink's VRF V2, ERC721Psi comes with an extension that can batch mint multiple tokens with tamper-proof on-chain random attributes while retaining the fixed minting gas cost.
