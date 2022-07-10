@@ -11,7 +11,7 @@ ERC721Psi is an ERC721 compilant implementation designed for scalable and gas-ef
 
 Powered by Chainlink's VRF V2, ERC721Psi comes with an extension that can batch mint multiple tokens with tamper-proof on-chain random attributes while retaining the fixed minting gas cost.
 
-Litepaper: https://medium.com/@medievaldao/erc721psi-a-truly-scalable-nft-standard-for-low-gas-on-chain-applications-and-randomized-metadata-c25c9e8ac8a8
+Litepaper: https://mirror.xyz/ctor.xyz/zy3TUWuJFSeWyMWAucTRP45o-sVToKTrtDsUIiD_m48
 
 Slides: https://www.slideshare.net/EstarriolVetch/erc721psi
 
