@@ -145,7 +145,7 @@
 <section id="considerations">
 <h2>Considerations<a class="headerlink" href="#considerations" title="Permalink to this headline"></a></h2>
 <p>It is important to realize that <code class="docutils literal notranslate"><span class="pre">balanceOf</span></code>, <code class="docutils literal notranslate"><span class="pre">totalSupply</span></code>, <code class="docutils literal notranslate"><span class="pre">tokenByIndex</span></code>, and <code class="docutils literal notranslate"><span class="pre">tokenOfOwnerByIndex</span></code> in ERC721Psi are not designed to be gas efficient since they are mostly used by front end only. By doing so, we are able to reduce the storage usage and thus minimize the gas consumption for the rest of the functions.</p>
-<p>If tracking <code class="docutils literal notranslate"><span class="pre">balanceOf</span></code> on-chain is important for your application, please use the ERC721PsiTrackBalance extension (coming soon).</p>
+<p>If tracking <code class="docutils literal notranslate"><span class="pre">balanceOf</span></code> on-chain is important for your application, please use the <code class="docutils literal notranslate"><span class="pre">ERC721PsiAddressData</span></code> extension.</p>
 </section>
 <section id="road-map">
 <h2>Road Map<a class="headerlink" href="#road-map" title="Permalink to this headline"></a></h2>
