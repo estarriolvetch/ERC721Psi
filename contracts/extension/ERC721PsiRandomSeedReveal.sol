@@ -16,10 +16,12 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 
 import "../interface/IERC721RandomSeed.sol";
 
-import "./ERC721PsiBatchMetaData.sol";
+import "../ERC721Psi.sol";
 
+abstract contract ERC721PsiRandomSeedReveal is ERC721Psi, IERC721RandomSeed, VRFConsumerBaseV2 {
+    using BitMaps for BitMaps.BitMap;
+    BitMaps.BitMap private _genHead;
 
-abstract contract ERC721PsiRandomSeedReveal is IERC721RandomSeed, ERC721PsiBatchMetaData, VRFConsumerBaseV2 {
     // Chainklink VRF V2
     VRFCoordinatorV2Interface immutable COORDINATOR;
     uint32 immutable callbackGasLimit;
@@ -32,8 +34,8 @@ abstract contract ERC721PsiRandomSeedReveal is IERC721RandomSeed, ERC721PsiBatch
     // genId => seed
     mapping(uint256 => uint256) private genSeed;
 
-    // batchHeadTokenId => genId
-    mapping(uint256 => uint256) private _batchHeadtokenGen;
+    // genHeadTokenId => genId
+    mapping(uint256 => uint256) private genHeadToGenId;
 
     // current genId for minting
     uint256 private currentGen;
@@ -48,6 +50,8 @@ abstract contract ERC721PsiRandomSeedReveal is IERC721RandomSeed, ERC721PsiBatch
         COORDINATOR = VRFCoordinatorV2Interface(coordinator);
         callbackGasLimit = _callbackGasLimit;
         requestConfirmations = _requestConfirmations;
+        // Gen 0 always starts at tokenId 0
+        _genHead.set(0);
     }
 
     /**
@@ -61,23 +65,16 @@ abstract contract ERC721PsiRandomSeedReveal is IERC721RandomSeed, ERC721PsiBatch
         _processRandomnessFulfillment(requestId, genId, randomness);
     }
 
-    function _safeMint(
-        address to,
-        uint256 quantity,
-        bytes memory _data
-    ) internal virtual override {
-        uint256 tokenIdHead = _minted;
-        _batchHeadtokenGen[tokenIdHead] = currentGen;
-        super._safeMint(to, quantity, _data);
-    }
-
     /**
         @dev Query the generation of `tokenId`.
      */
     function _tokenGen(uint256 tokenId) internal view returns (uint256) {
         require(_exists(tokenId), "ERC721PsiRandomSeedReveal: generation query for nonexistent token");
-        return _batchHeadtokenGen[_getMetaDataBatchHead(tokenId)];
-    } 
+        // Find next genHead for this token
+        uint256 genHeadTokenId = _genHead.scanForward(tokenId);
+        // Get gen from the genHead's tokenId
+        return genHeadToGenId[genHeadTokenId];
+    }
 
     /**
         @dev Request the randomess for the tokens of the current generation.
@@ -95,6 +92,10 @@ abstract contract ERC721PsiRandomSeedReveal is IERC721RandomSeed, ERC721PsiBatch
         requestIdToGenId[requestId] = currentGen;
         _processRandomnessRequest(requestId, currentGen);
         currentGen++;
+
+        // Set genHead for the next gen
+        _genHead.set(_minted);
+        genHeadToGenId[_minted] = currentGen;
     }
 
     /**
