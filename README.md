@@ -59,7 +59,7 @@ There are two types of random seed extensions with different schemes of requesti
 ## Considerations
 It is important to realize that `balanceOf`, `totalSupply`, `tokenByIndex`, and `tokenOfOwnerByIndex` in ERC721Psi are not designed to be gas efficient since they are mostly used by front end only. By doing so, we are able to reduce the storage usage and thus minimize the gas consumption for the rest of the functions.
 
-If tracking `balanceOf` on-chain is important for your application, please use the ERC721PsiTrackBalance extension (coming soon).
+If tracking `balanceOf` on-chain is important for your application, please use the `ERC721PsiAddressData` extension.
 
 ## Road Map
 - Implement more extensions.
