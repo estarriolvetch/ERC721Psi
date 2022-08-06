@@ -7,7 +7,7 @@
     "@chainlink/contracts": "^0.4.0",
     "@openzeppelin/contracts": "^4.4.2",
     "@openzeppelin/contracts-upgradeable": "^4.5.1",
-    "solidity-bits": "^0.1.0"
+    "solidity-bits": "^0.3.2"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.0",
