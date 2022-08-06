@@ -105,7 +105,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         override
         returns (address)
     {
-        (address owner, uint256 tokenIdBatchHead) = _ownerAndBatchHeadOf(tokenId);
+        (address owner, ) = _ownerAndBatchHeadOf(tokenId);
         return owner;
     }
 
@@ -480,7 +480,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
     /**
      * @dev See {IERC721Enumerable-tokenByIndex}.
      */
-    function tokenByIndex(uint256 index) public view virtual override returns (uint256) {
+    function tokenByIndex(uint256 index) public view virtual override returns (uint256 tokenId) {
         require(index < totalSupply(), "ERC721Psi: global index out of bounds");
         
         uint count;

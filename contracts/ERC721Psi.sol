@@ -99,7 +99,7 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerab
         override
         returns (address)
     {
-        (address owner, uint256 tokenIdBatchHead) = _ownerAndBatchHeadOf(tokenId);
+        (address owner, ) = _ownerAndBatchHeadOf(tokenId);
         return owner;
     }
 
@@ -474,7 +474,7 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerab
     /**
      * @dev See {IERC721Enumerable-tokenByIndex}.
      */
-    function tokenByIndex(uint256 index) public view virtual override returns (uint256) {
+    function tokenByIndex(uint256 index) public view virtual override returns (uint256 tokenId) {
         require(index < totalSupply(), "ERC721Psi: global index out of bounds");
         
         uint count;
