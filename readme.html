@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -81,7 +82,7 @@
            <div itemprop="articleBody">
              
   <section id="erc721psi">
-<h1>ERC721Psi<a class="headerlink" href="#erc721psi" title="Permalink to this headline"></a></h1>
+<h1>ERC721Psi<a class="headerlink" href="#erc721psi" title="Permalink to this heading"></a></h1>
 <a class="reference external image-reference" href="https://github.com/estarriolvetch/ERC721Psi/actions/workflows/node.js.yml"><img alt="Node.js CI" src="https://github.com/estarriolvetch/ERC721Psi/actions/workflows/node.js.yml/badge.svg" /></a>
 <a class="reference external image-reference" href="https://github.com/estarriolvetch/ERC721Psi/actions/workflows/deploy_npm.yml"><img alt="Publish Package to npmjs" src="https://github.com/estarriolvetch/ERC721Psi/actions/workflows/deploy_npm.yml/badge.svg" /></a>
 <a class="reference external image-reference" href="https://github.com/estarriolvetch/ERC721Psi/actions/workflows/make_docs.yml"><img alt="Build Documentation" src="https://github.com/estarriolvetch/ERC721Psi/actions/workflows/make_docs.yml/badge.svg" /></a>
@@ -93,22 +94,22 @@
 <p>Slides: <a class="reference external" href="https://www.slideshare.net/EstarriolVetch/erc721psi">https://www.slideshare.net/EstarriolVetch/erc721psi</a></p>
 <p>Docs: <a class="reference external" href="https://estarriolvetch.github.io/ERC721Psi/">https://estarriolvetch.github.io/ERC721Psi/</a></p>
 <section id="installaion">
-<h2>Installaion<a class="headerlink" href="#installaion" title="Permalink to this headline"></a></h2>
+<h2>Installaion<a class="headerlink" href="#installaion" title="Permalink to this heading"></a></h2>
 <section id="npm">
-<h3>npm<a class="headerlink" href="#npm" title="Permalink to this headline"></a></h3>
+<h3>npm<a class="headerlink" href="#npm" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span> <span class="o">--</span><span class="n">save</span><span class="o">-</span><span class="n">dev</span> <span class="n">erc721psi</span>
 </pre></div>
 </div>
 </section>
 <section id="yarn">
-<h3>yarn<a class="headerlink" href="#yarn" title="Permalink to this headline"></a></h3>
+<h3>yarn<a class="headerlink" href="#yarn" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yarn</span> <span class="n">add</span> <span class="o">--</span><span class="n">dev</span> <span class="n">erc721psi</span>
 </pre></div>
 </div>
 </section>
 </section>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline"></a></h2>
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h2>
 <div class="highlight-solidity notranslate"><div class="highlight"><pre><span></span><span class="k">pragma solidity</span><span class="w"> </span><span class="o">^</span><span class="k">0.8.0</span><span class="p">;</span><span class="w"></span>
 
 <span class="kt">import</span><span class="w"> </span><span class="s2">&quot;erc721psi/contracts/ERC721Psi.sol&quot;</span><span class="p">;</span><span class="w"></span>
@@ -129,7 +130,7 @@
 </div>
 </section>
 <section id="random-seed-extension">
-<h2>Random Seed Extension<a class="headerlink" href="#random-seed-extension" title="Permalink to this headline"></a></h2>
+<h2>Random Seed Extension<a class="headerlink" href="#random-seed-extension" title="Permalink to this heading"></a></h2>
 <p>The random seed extensions provide an easy way for NFT projects to create on-chain randomized metata at the individual token level. The random seed extensions uses Chainlink’s VRF V2 as its source of randomness. Each token comes with its own unique seed that can be used to derived its attributes.</p>
 <div class="highlight-solidity notranslate"><div class="highlight"><pre><span></span>interface<span class="w"> </span>IERC721RandomSeed<span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="kt">function</span><span class="w"> </span><span class="nv">seed</span><span class="p">(</span><span class="kt">uint256</span><span class="w"> </span><span class="nv">tokenId</span><span class="p">)</span><span class="w"> </span><span class="kt">external</span><span class="w"> </span>view<span class="w"> </span><span class="kt">returns</span><span class="w"> </span><span class="p">(</span><span class="kt">uint256</span><span class="p">);</span><span class="w"></span>
@@ -143,12 +144,12 @@
 </ul>
 </section>
 <section id="considerations">
-<h2>Considerations<a class="headerlink" href="#considerations" title="Permalink to this headline"></a></h2>
+<h2>Considerations<a class="headerlink" href="#considerations" title="Permalink to this heading"></a></h2>
 <p>It is important to realize that <code class="docutils literal notranslate"><span class="pre">balanceOf</span></code>, <code class="docutils literal notranslate"><span class="pre">totalSupply</span></code>, <code class="docutils literal notranslate"><span class="pre">tokenByIndex</span></code>, and <code class="docutils literal notranslate"><span class="pre">tokenOfOwnerByIndex</span></code> in ERC721Psi are not designed to be gas efficient since they are mostly used by front end only. By doing so, we are able to reduce the storage usage and thus minimize the gas consumption for the rest of the functions.</p>
 <p>If tracking <code class="docutils literal notranslate"><span class="pre">balanceOf</span></code> on-chain is important for your application, please use the <code class="docutils literal notranslate"><span class="pre">ERC721PsiAddressData</span></code> extension.</p>
 </section>
 <section id="road-map">
-<h2>Road Map<a class="headerlink" href="#road-map" title="Permalink to this headline"></a></h2>
+<h2>Road Map<a class="headerlink" href="#road-map" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Implement more extensions.</p></li>
 <li><p>Add more test cases.</p></li>
@@ -156,7 +157,7 @@
 </ul>
 </section>
 <section id="contributors">
-<h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this headline"></a></h2>
+<h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this heading"></a></h2>
 <p>PRs on documentations, test cases, and any contract improvemetns are welcomed!!</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/madeinfree">madeinfree</a></p></li>
@@ -164,6 +165,7 @@
 ## Projects using ERC721Psi
 If your projects use ERC721Psi, we’d like know more about it!
 Feel free to DM <a class="reference external" href="https://twitter.com/0xEstarriol">0xEstarriol</a> to share your project.</p></li>
+<li><p>Shellz Orb: <a class="reference external" href="https://opensea.io/collection/shellzorb">opensea</a></p></li>
 <li><p>Medieval Adventurer: <a class="reference external" href="https://twitter.com/DaoMedieval">twitter</a>, <a class="reference external" href="https://opensea.io/collection/medieval-adventurer/">opensea</a></p></li>
 <li><p>Haruna Future: <a class="reference external" href="https://twitter.com/HarunaNft">twitter</a>, <a class="reference external" href="https://opensea.io/collection/harunafutureofficial">opensea</a></p></li>
 </ul>
