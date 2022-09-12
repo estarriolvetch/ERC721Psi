@@ -6,8 +6,10 @@
  |  __| |  _  /| |       / /   / / | |\_   _/ 
  | |____| | \ \| |____  / /   / /_ | |  | |   
  |______|_|  \_\\_____|/_/   |____||_|  |_|   
-                                              
-                                            
+
+ - github: https://github.com/estarriolvetch/ERC721Psi
+ - npm: https://www.npmjs.com/package/erc721psi
+                                          
  */
 
 pragma solidity ^0.8.0;
