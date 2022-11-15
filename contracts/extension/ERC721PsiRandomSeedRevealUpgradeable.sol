@@ -66,8 +66,8 @@ abstract contract ERC721PsiRandomSeedRevealUpgradeable is IERC721RandomSeed, ERC
         uint256 quantity,
         bytes memory _data
     ) internal virtual override {
-        uint256 tokenIdHead = _minted;
-        _batchHeadtokenGen[tokenIdHead] = currentGen;
+        uint256 nextTokenId = _nextTokenId();
+        _batchHeadtokenGen[nextTokenId] = currentGen;
         super._safeMint(to, quantity, _data);
     }
 

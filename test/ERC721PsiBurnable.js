@@ -1,5 +1,6 @@
 const { expect } = require('chai');
 const { constants } = require('@openzeppelin/test-helpers');
+const { BigNumber } = require('ethers');
 const { zeroAddress } = require('ethereumjs-blockchain/node_modules/ethereumjs-util');
 const { ZERO_ADDRESS } = constants;
 
@@ -76,6 +77,14 @@ describe('ERC721PsiBurnable', function () {
 
       it('reverts for an invalid token', async function () {
         await expect(this.ERC721Psi.ownerOf(10)).to.be.revertedWith('ERC721Psi: owner query for nonexistent token');
+      });
+    });
+
+    describe('tokensOfOwner', async function () {
+      it('returns the right owner list', async function () {
+        expect(await this.ERC721Psi.tokensOfOwner(this.addr1.address)).to.eqls([new BigNumber.from("0")]);
+        expect(await this.ERC721Psi.tokensOfOwner(this.addr2.address)).to.eqls([new BigNumber.from("1"), new BigNumber.from("2")]);
+        expect(await this.ERC721Psi.tokensOfOwner(this.addr3.address)).to.eqls([new BigNumber.from("3"), new BigNumber.from("4"), new BigNumber.from("5")]);
       });
     });
 
@@ -158,10 +167,6 @@ describe('ERC721PsiBurnable', function () {
           expect(await this.ERC721Psi.balanceOf(from)).to.be.equal(1);
         });
 
-        it('adjusts owners tokens by index', async function () {
-          expect(await this.ERC721Psi.tokenOfOwnerByIndex(to, 0)).to.be.equal(tokenId);
-          expect(await this.ERC721Psi.tokenOfOwnerByIndex(from, 0)).to.be.not.equal(tokenId);
-        });
       };
 
       const testUnsuccessfulTransfer = function (transferFn) {
