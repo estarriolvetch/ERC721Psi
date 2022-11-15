@@ -26,8 +26,7 @@ abstract contract ERC721PsiBatchMetaDataUpgradeable is ERC721PsiUpgradeable {
         uint256 quantity,
         bytes memory _data
     ) internal virtual override {
-        uint256 tokenIdBatchHead = _minted;
-        _metaDataBatchHead.set(tokenIdBatchHead);
+        _metaDataBatchHead.set(_nextTokenId());
         super._safeMint(to, quantity, _data);
     }
 
