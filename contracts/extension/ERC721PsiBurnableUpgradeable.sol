@@ -58,16 +58,17 @@ abstract contract ERC721PsiBurnableUpgradeable is ERC721PsiUpgradeable {
      * @dev See {IERC721Enumerable-totalSupply}.
      */
     function totalSupply() public view virtual override returns (uint256) {
-        return _minted - _burned();
+        return _totalMinted() - _burned();
     }
 
     /**
      * @dev Returns number of token burned.
      */
     function _burned() internal view returns (uint256 burned){
-        uint256 totalBucket = (_minted >> 8) + 1;
+        uint256 startBucket = _startTokenId() >> 8;
+        uint256 lastBucket = (_nextTokenId() >> 8) + 1;
 
-        for(uint256 i=0; i < totalBucket; i++) {
+        for(uint256 i=startBucket; i < lastBucket; i++) {
             uint256 bucket = _burnedToken.getBucket(i);
             burned += _popcount(bucket);
         }

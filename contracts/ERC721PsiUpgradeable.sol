@@ -27,7 +27,7 @@ import "solidity-bits/contracts/BitMaps.sol";
 
 
 contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable, 
-    ERC165Upgradeable, IERC721Upgradeable, IERC721MetadataUpgradeable, IERC721EnumerableUpgradeable {
+    ERC165Upgradeable, IERC721Upgradeable, IERC721MetadataUpgradeable {
     
     using AddressUpgradeable for address;
     using StringsUpgradeable for uint256;
@@ -40,7 +40,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
 
     // Mapping from token ID to owner address
     mapping(uint256 => address) internal _owners;
-    uint256 internal _minted;
+    uint256 private _currentIndex;
 
     mapping(uint256 => address) private _tokenApprovals;
     mapping(address => mapping(address => bool)) private _operatorApprovals;
@@ -55,7 +55,32 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
     function __ERC721Psi_init_unchained(string memory name_, string memory symbol_) internal onlyInitializing {
         _name = name_;
         _symbol = symbol_;
+        _currentIndex = _startTokenId();
     }
+
+    /**
+     * @dev Returns the starting token ID.
+     * To change the starting token ID, please override this function.
+     */
+    function _startTokenId() internal pure returns (uint256) {
+        // It will become modifiable in the future versions
+        return 0;
+    }
+
+    /**
+     * @dev Returns the next token ID to be minted.
+     */
+    function _nextTokenId() internal view virtual returns (uint256) {
+        return _currentIndex;
+    }
+
+    /**
+     * @dev Returns the total amount of tokens minted in the contract.
+     */
+    function _totalMinted() internal view virtual returns (uint256) {
+        return _currentIndex - _startTokenId();
+    }
+
 
     /**
      * @dev See {IERC165-supportsInterface}.
@@ -87,7 +112,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         require(owner != address(0), "ERC721Psi: balance query for the zero address");
 
         uint count;
-        for( uint i; i < _minted; ++i ){
+        for( uint i = _startTokenId(); i < _nextTokenId(); ++i ){
             if(_exists(i)){
                 if( owner == ownerOf(i)){
                     ++count;
@@ -294,7 +319,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
      * Tokens start existing when they are minted (`_mint`).
      */
     function _exists(uint256 tokenId) internal view virtual returns (bool) {
-        return tokenId < _minted;
+        return tokenId < _nextTokenId();
     }
 
     /**
@@ -340,7 +365,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         uint256 quantity,
         bytes memory _data
     ) internal virtual {
-        uint256 startTokenId = _minted;
+        uint256 startTokenId = _nextTokenId();
         _mint(to, quantity);
         require(
             _checkOnERC721Received(address(0), to, startTokenId, quantity, _data),
@@ -353,19 +378,19 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         address to,
         uint256 quantity
     ) internal virtual {
-        uint256 tokenIdBatchHead = _minted;
+        uint256 nextTokenId = _nextTokenId();
         
         require(quantity > 0, "ERC721Psi: quantity must be greater 0");
         require(to != address(0), "ERC721Psi: mint to the zero address");
         
-        _beforeTokenTransfers(address(0), to, tokenIdBatchHead, quantity);
-        _minted += quantity;
-        _owners[tokenIdBatchHead] = to;
-        _batchHead.set(tokenIdBatchHead);
-        _afterTokenTransfers(address(0), to, tokenIdBatchHead, quantity);
+        _beforeTokenTransfers(address(0), to, nextTokenId, quantity);
+        _currentIndex += quantity;
+        _owners[nextTokenId] = to;
+        _batchHead.set(nextTokenId);
+        _afterTokenTransfers(address(0), to, nextTokenId, quantity);
         
         // Emit events
-        for(uint256 tokenId=tokenIdBatchHead;tokenId < tokenIdBatchHead + quantity; tokenId++){
+        for(uint256 tokenId=nextTokenId; tokenId < nextTokenId + quantity; tokenId++){
             emit Transfer(address(0), to, tokenId);
         } 
     }
@@ -403,7 +428,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         uint256 nextTokenId = tokenId + 1;
 
         if(!_batchHead.get(nextTokenId) &&  
-            nextTokenId < _minted
+            nextTokenId < _nextTokenId()
         ) {
             _owners[nextTokenId] = from;
             _batchHead.set(nextTokenId);
@@ -472,41 +497,33 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         tokenIdBatchHead = _batchHead.scanForward(tokenId); 
     }
 
-    /**
-     * @dev See {IERC721Enumerable-totalSupply}.
-     */
-    function totalSupply() public view virtual override returns (uint256) {
-        return _minted;
+    
+    function totalSupply() public virtual view returns (uint256) {
+        return _totalMinted();
     }
 
     /**
-     * @dev See {IERC721Enumerable-tokenByIndex}.
+     * @dev Returns an array of token IDs owned by `owner`.
+     *
+     * This function scans the ownership mapping and is O(`totalSupply`) in complexity.
+     * It is meant to be called off-chain.
+     *
+     * This function is compatiable with ERC721AQueryable.
      */
-    function tokenByIndex(uint256 index) public view virtual override returns (uint256 tokenId) {
-        require(index < totalSupply(), "ERC721Psi: global index out of bounds");
-        
-        uint count;
-        for(uint i; i < _minted; i++){
-            if(_exists(i)){
-                if(count == index) return i;
-                else count++;
+    function tokensOfOwner(address owner) external view virtual returns (uint256[] memory) {
+        unchecked {
+            uint256 tokenIdsIdx;
+            uint256 tokenIdsLength = balanceOf(owner);
+            uint256[] memory tokenIds = new uint256[](tokenIdsLength);
+            for (uint256 i = _startTokenId(); tokenIdsIdx != tokenIdsLength; ++i) {
+                if (_exists(i)) {
+                    if (ownerOf(i) == owner) {
+                        tokenIds[tokenIdsIdx++] = i;
+                    }
+                }
             }
+            return tokenIds;   
         }
-    }
-
-    /**
-     * @dev See {IERC721Enumerable-tokenOfOwnerByIndex}.
-     */
-    function tokenOfOwnerByIndex(address owner, uint256 index) public view virtual override returns (uint256 tokenId) {
-        uint count;
-        for(uint i; i < _minted; i++){
-            if(_exists(i) && owner == ownerOf(i)){
-                if(count == index) return i;
-                else count++;
-            }
-        }
-
-        revert("ERC721Psi: owner index out of bounds");
     }
 
 
