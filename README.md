@@ -4,6 +4,8 @@
 [![Build Documentation](https://github.com/estarriolvetch/ERC721Psi/actions/workflows/make_docs.yml/badge.svg)](https://github.com/estarriolvetch/ERC721Psi/actions/workflows/make_docs.yml)
 [![npm version](https://badge.fury.io/js/erc721psi.svg)](https://www.npmjs.com/package/erc721psi)
 
+**If your application doesn't require a specific ERC721 interface, you may be interested in checking [ERC1155](https://erc1155delta.ctor.xyz) which provides even more gas saving than ERC721Psi. **
+
 **ERC721Psi is releasd under MIT opensource licence and free to use. If you need commercial support/service regarding ERC721Psi, feel free to contact [ctor.xyz](https://ctor.xyz)**
 
 
