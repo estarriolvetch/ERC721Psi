@@ -45,6 +45,12 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
     mapping(uint256 => address) private _tokenApprovals;
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
+    // The mask of the lower 160 bits for addresses.
+    uint256 private constant _BITMASK_ADDRESS = (1 << 160) - 1;
+    // The `Transfer` event signature is given by:
+    // `keccak256(bytes("Transfer(address,address,uint256)"))`.
+    bytes32 private constant _TRANSFER_EVENT_SIGNATURE =
+        0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef;
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
@@ -387,12 +393,41 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         _currentIndex += quantity;
         _owners[nextTokenId] = to;
         _batchHead.set(nextTokenId);
+
+        uint256 toMasked;
+        uint256 end = nextTokenId + quantity;
+
+        // Use assembly to loop and emit the `Transfer` event for gas savings.
+        // The duplicated `log4` removes an extra check and reduces stack juggling.
+        // The assembly, together with the surrounding Solidity code, have been
+        // delicately arranged to nudge the compiler into producing optimized opcodes.
+        assembly {
+            // Mask `to` to the lower 160 bits, in case the upper bits somehow aren't clean.
+            toMasked := and(to, _BITMASK_ADDRESS)
+            // Emit the `Transfer` event.
+            log4(
+                0, // Start of data (0, since no data).
+                0, // End of data (0, since no data).
+                _TRANSFER_EVENT_SIGNATURE, // Signature.
+                0, // `address(0)`.
+                toMasked, // `to`.
+                nextTokenId // `tokenId`.
+            )
+
+            // The `iszero(eq(,))` check ensures that large values of `quantity`
+            // that overflows uint256 will make the loop run out of gas.
+            // The compiler will optimize the `iszero` away for performance.
+            for {
+                let tokenId := add(nextTokenId, 1)
+            } iszero(eq(tokenId, end)) {
+                tokenId := add(tokenId, 1)
+            } {
+                // Emit the `Transfer` event. Similar to above.
+                log4(0, 0, _TRANSFER_EVENT_SIGNATURE, 0, toMasked, tokenId)
+            }
+        }
+
         _afterTokenTransfers(address(0), to, nextTokenId, quantity);
-        
-        // Emit events
-        for(uint256 tokenId=nextTokenId; tokenId < nextTokenId + quantity; tokenId++){
-            emit Transfer(address(0), to, tokenId);
-        } 
     }
 
 
