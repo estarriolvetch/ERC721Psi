@@ -62,16 +62,6 @@ interface IERC721Psi {
      */
     error URIQueryForNonexistentToken();
 
-    /**
-     * The `quantity` minted with ERC2309 exceeds the safety limit.
-     */
-    error MintERC2309QuantityExceedsLimit();
-
-    /**
-     * The `extraData` cannot be set on an unintialized ownership slot.
-     */
-    error OwnershipNotInitializedForExtraData();
-
 
     // =============================================================
     //                         TOKEN COUNTERS
