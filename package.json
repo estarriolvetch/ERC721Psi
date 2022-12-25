@@ -3,6 +3,11 @@
   "version": "0.8.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "node": "hardhat node",
+    "test": "hardhat test",
+    "test:gas": "REPORT_GAS=true npx hardhat test"
+  },
   "dependencies": {
     "@chainlink/contracts": "^0.4.0",
     "@openzeppelin/contracts": "^4.4.2",
@@ -23,6 +28,7 @@
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.5.3",
     "hardhat": "^2.8.3",
+		"hardhat-gas-reporter": "^1.0.7",
     "npm": "^8.6.0"
   }
 }

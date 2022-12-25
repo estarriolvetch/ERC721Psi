@@ -14,18 +14,14 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/utils/StorageSlot.sol";
 import "solidity-bits/contracts/BitMaps.sol";
+import "./interface/IERC721Psi.sol";
 
 
-contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
+contract ERC721Psi is IERC721Psi {
     using Address for address;
     using Strings for uint256;
     using BitMaps for BitMaps.BitMap;
@@ -55,8 +51,7 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
      * @dev Returns the starting token ID.
      * To change the starting token ID, please override this function.
      */
-    function _startTokenId() internal pure returns (uint256) {
-        // It will become modifiable in the future versions
+    function _startTokenId() internal view virtual returns (uint256) {
         return 0;
     }
 
@@ -76,19 +71,22 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
 
 
     /**
-     * @dev See {IERC165-supportsInterface}.
+     * @dev Returns true if this contract implements the interface defined by
+     * `interfaceId`. See the corresponding
+     * [EIP section](https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified)
+     * to learn more about how these ids are created.
+     *
+     * This function call must use less than 30000 gas.
      */
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(ERC165, IERC165)
-        returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+        // The interface IDs are constants representing the first 4 bytes
+        // of the XOR of all function selectors in the interface.
+        // See: [ERC165](https://eips.ethereum.org/EIPS/eip-165)
+        // (e.g. `bytes4(i.functionA.selector ^ i.functionB.selector ^ ...)`)
         return
-            interfaceId == type(IERC721).interfaceId ||
-            interfaceId == type(IERC721Metadata).interfaceId ||
-            super.supportsInterface(interfaceId);
+            interfaceId == 0x01ffc9a7 || // ERC165 interface ID for ERC165.
+            interfaceId == 0x80ac58cd || // ERC165 interface ID for ERC721.
+            interfaceId == 0x5b5e139f; // ERC165 interface ID for ERC721Metadata.
     }
 
     /**
@@ -101,7 +99,7 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
         override 
         returns (uint) 
     {
-        require(owner != address(0), "ERC721Psi: balance query for the zero address");
+        if(owner == address(0)) revert BalanceQueryForZeroAddress();
 
         uint count;
         for( uint i = _startTokenId(); i < _nextTokenId(); ++i ){
@@ -129,7 +127,7 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
     }
 
     function _ownerAndBatchHeadOf(uint256 tokenId) internal view returns (address owner, uint256 tokenIdBatchHead){
-        require(_exists(tokenId), "ERC721Psi: owner query for nonexistent token");
+        if (!_exists(tokenId)) revert OwnerQueryForNonexistentToken();
         tokenIdBatchHead = _getBatchHead(tokenId);
         owner = _owners[tokenIdBatchHead];
     }
@@ -152,8 +150,7 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
      * @dev See {IERC721Metadata-tokenURI}.
      */
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        require(_exists(tokenId), "ERC721Psi: URI query for nonexistent token");
-
+        if( !_exists(tokenId)) revert URIQueryForNonexistentToken();
         string memory baseURI = _baseURI();
         return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
     }
@@ -171,14 +168,14 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-approve}.
      */
-    function approve(address to, uint256 tokenId) public virtual override {
+    function approve(address to, uint256 tokenId) public payable virtual override {
         address owner = ownerOf(tokenId);
-        require(to != owner, "ERC721Psi: approval to current owner");
 
-        require(
-            _msgSender() == owner || isApprovedForAll(owner, _msgSender()),
-            "ERC721Psi: approve caller is not owner nor approved for all"
-        );
+        if (_msgSenderERC721Psi() != owner) {
+            if (!isApprovedForAll(owner, _msgSenderERC721Psi())) {
+                revert ApprovalCallerNotOwnerNorApproved();
+            }
+        }
 
         _approve(to, tokenId);
     }
@@ -191,12 +188,9 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
         view
         virtual
         override
-        returns (address)
+        returns (address) 
     {
-        require(
-            _exists(tokenId),
-            "ERC721Psi: approved query for nonexistent token"
-        );
+        if (!_exists(tokenId)) revert ApprovalQueryForNonexistentToken();
 
         return _tokenApprovals[tokenId];
     }
@@ -209,10 +203,8 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
         virtual
         override
     {
-        require(operator != _msgSender(), "ERC721Psi: approve to caller");
-
-        _operatorApprovals[_msgSender()][operator] = approved;
-        emit ApprovalForAll(_msgSender(), operator, approved);
+        _operatorApprovals[_msgSenderERC721Psi()][operator] = approved;
+        emit ApprovalForAll(_msgSenderERC721Psi(), operator, approved);
     }
 
     /**
@@ -235,13 +227,7 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
         address from,
         address to,
         uint256 tokenId
-    ) public virtual override {
-        //solhint-disable-next-line max-line-length
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721Psi: transfer caller is not owner nor approved"
-        );
-
+    ) public payable virtual override {
         _transfer(from, to, tokenId);
     }
 
@@ -252,7 +238,7 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
         address from,
         address to,
         uint256 tokenId
-    ) public virtual override {
+    ) public payable virtual override {
         safeTransferFrom(from, to, tokenId, "");
     }
 
@@ -264,11 +250,7 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
         address to,
         uint256 tokenId,
         bytes memory _data
-    ) public virtual override {
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721Psi: transfer caller is not owner nor approved"
-        );
+    ) public payable virtual override {
         _safeTransfer(from, to, tokenId, _data);
     }
 
@@ -297,10 +279,9 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
         bytes memory _data
     ) internal virtual {
         _transfer(from, to, tokenId);
-        require(
-            _checkOnERC721Received(from, to, tokenId, 1,_data),
-            "ERC721Psi: transfer to non ERC721Receiver implementer"
-        );
+        if (!_checkOnERC721Received(from, to, tokenId, 1, _data)) {
+            revert TransferToNonERC721ReceiverImplementer();
+        }
     }
 
     /**
@@ -357,12 +338,13 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
         uint256 quantity,
         bytes memory _data
     ) internal virtual {
-        uint256 nextTokenId = _nextTokenId();
         _mint(to, quantity);
-        require(
-            _checkOnERC721Received(address(0), to, nextTokenId, quantity, _data),
-            "ERC721Psi: transfer to non ERC721Receiver implementer"
-        );
+        uint256 end = _currentIndex;
+        if (!_checkOnERC721Received(address(0), to, end - quantity, quantity, _data)) {
+            revert TransferToNonERC721ReceiverImplementer();
+        }
+        // Reentrancy protection.
+        if (_currentIndex != end) revert();
     }
 
 
@@ -372,8 +354,8 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
     ) internal virtual {
         uint256 nextTokenId = _nextTokenId();
         
-        require(quantity > 0, "ERC721Psi: quantity must be greater 0");
-        require(to != address(0), "ERC721Psi: mint to the zero address");
+        if (quantity == 0) revert MintZeroQuantity();
+        if (to == address(0)) revert MintToZeroAddress();
         
         _beforeTokenTransfers(address(0), to, nextTokenId, quantity);
         _currentIndex += quantity;
@@ -404,13 +386,16 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
         address to,
         uint256 tokenId
     ) internal virtual {
+
         (address owner, uint256 tokenIdBatchHead) = _ownerAndBatchHeadOf(tokenId);
 
-        require(
-            owner == from,
-            "ERC721Psi: transfer of token that is not own"
-        );
-        require(to != address(0), "ERC721Psi: transfer to the zero address");
+        if (owner != from) revert TransferFromIncorrectOwner();
+
+        if (!_isApprovedOrOwner(_msgSenderERC721Psi(), tokenId)) {
+            revert TransferCallerNotOwnerNorApproved();
+        }
+
+        if (to == address(0)) revert TransferToZeroAddress();
 
         _beforeTokenTransfers(from, to, tokenId, 1);
 
@@ -467,11 +452,11 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
         if (to.isContract()) {
             r = true;
             for(uint256 tokenId = startTokenId; tokenId < startTokenId + quantity; tokenId++){
-                try IERC721Receiver(to).onERC721Received(_msgSender(), from, tokenId, _data) returns (bytes4 retval) {
+                try IERC721Receiver(to).onERC721Received( _msgSenderERC721Psi(), from, tokenId, _data) returns (bytes4 retval) {
                     r = r && retval == IERC721Receiver.onERC721Received.selector;
                 } catch (bytes memory reason) {
                     if (reason.length == 0) {
-                        revert("ERC721Psi: transfer to non ERC721Receiver implementer");
+                        revert TransferToNonERC721ReceiverImplementer();
                     } else {
                         assembly {
                             revert(add(32, reason), mload(reason))
@@ -555,4 +540,14 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
         uint256 startTokenId,
         uint256 quantity
     ) internal virtual {}
+
+
+    /**
+     * @dev Returns the message sender (defaults to `msg.sender`).
+     *
+     * If you are writing GSN compatible contracts, you need to override this function.
+     */
+    function _msgSenderERC721Psi() internal view virtual returns (address) {
+        return msg.sender;
+    }
 }
