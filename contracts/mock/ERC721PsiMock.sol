@@ -9,6 +9,9 @@ import "hardhat/console.sol";
 contract ERC721PsiMock is ERC721Psi {
     constructor(string memory name_, string memory symbol_) ERC721Psi(name_, symbol_) {}
 
+    function _startTokenId() internal pure override returns (uint256) {
+        return 0;
+    }
 
     function baseURI() public view returns (string memory) {
         return _baseURI();

@@ -15,6 +15,9 @@ contract ERC721PsiMockUpgradeable is ERC721PsiUpgradeable {
         __ERC721Psi_init(name_, symbol_);
     }
 
+    function _startTokenId() internal pure override returns (uint256) {
+        return 0;
+    }
 
     function baseURI() public view returns (string memory) {
         return _baseURI();

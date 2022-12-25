@@ -58,12 +58,12 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         _currentIndex = _startTokenId();
     }
 
+
     /**
      * @dev Returns the starting token ID.
      * To change the starting token ID, please override this function.
      */
-    function _startTokenId() internal pure returns (uint256) {
-        // It will become modifiable in the future versions
+    function _startTokenId() internal pure virtual returns (uint256) {
         return 0;
     }
 
