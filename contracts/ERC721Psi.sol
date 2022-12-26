@@ -14,14 +14,25 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "solidity-bits/contracts/BitMaps.sol";
 import "./interface/IERC721Psi.sol";
 
+/**
+ * @dev Interface of ERC721 token receiver.
+ */
+interface ERC721Psi__IERC721Receiver {
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external returns (bytes4);
+}
 
 contract ERC721Psi is IERC721Psi {
+    
     using Address for address;
     using Strings for uint256;
     using BitMaps for BitMaps.BitMap;
@@ -452,8 +463,8 @@ contract ERC721Psi is IERC721Psi {
         if (to.isContract()) {
             r = true;
             for(uint256 tokenId = startTokenId; tokenId < startTokenId + quantity; tokenId++){
-                try IERC721Receiver(to).onERC721Received( _msgSenderERC721Psi(), from, tokenId, _data) returns (bytes4 retval) {
-                    r = r && retval == IERC721Receiver.onERC721Received.selector;
+                try ERC721Psi__IERC721Receiver(to).onERC721Received( _msgSenderERC721Psi(), from, tokenId, _data) returns (bytes4 retval) {
+                    r = r && retval == ERC721Psi__IERC721Receiver.onERC721Received.selector;
                 } catch (bytes memory reason) {
                     if (reason.length == 0) {
                         revert TransferToNonERC721ReceiverImplementer();

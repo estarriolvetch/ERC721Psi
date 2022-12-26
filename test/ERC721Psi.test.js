@@ -7,19 +7,30 @@ const { ZERO_ADDRESS } = constants;
 const RECEIVER_MAGIC_VALUE = '0x150b7a02';
 const GAS_MAGIC_VALUE = 20000;
 
-const createTestSuite = ({ contract, constructorArgs }) =>
+const createTestSuite = ({ contract, constructorArgs, initializer}) =>
   function () {
     let offsetted;
 
     context(`${contract}`, function () {
-      beforeEach(async function () {
-        this.erc721psi = await deployContract(contract, constructorArgs);
-        this.receiver = await deployContract('ERC721ReceiverMock', [RECEIVER_MAGIC_VALUE, this.erc721psi.address]);
+      beforeEach(async function (){
+        if (contract.includes("Upgradeable")) { 
+          this.ERC721PsiImplementation = await ethers.getContractFactory(contract);
+          this.erc721psi = await upgrades.deployProxy(
+            this.ERC721PsiImplementation,
+            constructorArgs,
+            {initializer}
+          );
+        }
+        else {
+          this.erc721psi = await deployContract(contract, constructorArgs);
+        }
+        this.receiver = await deployContract('ERC721ReceiverMock', [
+          RECEIVER_MAGIC_VALUE, 
+          this.erc721psi.address
+        ]);
         this.startTokenId = this.erc721psi.startTokenId ? (await this.erc721psi.startTokenId()).toNumber() : 0;
-
-        offsetted = (...arr) => offsettedIndex(this.startTokenId, arr);
+        offsetted = (...arr) => offsettedIndex(this.startTokenId, arr)
       });
-
       describe('EIP-165 support', async function () {
         it('supports ERC165', async function () {
           expect(await this.erc721psi.supportsInterface('0x01ffc9a7')).to.eq(true);
@@ -589,9 +600,23 @@ const createTestSuite = ({ contract, constructorArgs }) =>
     });
   };
 
-describe('ERC721Psi', createTestSuite({ contract: 'ERC721PsiMock', constructorArgs: ['ERC721Psi', 'ERC721Psi'] }));
+describe('ERC721Psi', createTestSuite({ 
+  contract: 'ERC721PsiMock', 
+  constructorArgs: ['ERC721Psi', 'ERC721Psi'],
+}));
 
-describe(
-  'ERC721Psi override _startTokenId()',
-  createTestSuite({ contract: 'ERC721PsiStartTokenIdMock', constructorArgs: ['ERC721Psi', 'ERC721Psi', 1] })
-);
+describe('ERC721Psi override _startTokenId()', createTestSuite({ 
+  contract: 'ERC721PsiStartTokenIdMock', 
+  constructorArgs: ['ERC721Psi', 'ERC721Psi', 1],
+}));
+
+describe('ERC721PsiUpgradeable', createTestSuite({
+  contract: 'ERC721PsiMockUpgradeable',
+  constructorArgs: ['ERC721Psi', 'ERC721Psi'],
+}));
+
+describe('ERC721PsiUpgradeable override _startTokenId()', createTestSuite({
+  contract: 'ERC721PsiStartTokenIdMockUpgradeable',
+  constructorArgs: ['ERC721Psi', 'ERC721Psi', 1],
+  initializer: "initializeWithStartTokenId"
+}));
