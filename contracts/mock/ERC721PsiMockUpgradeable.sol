@@ -9,14 +9,6 @@ import "hardhat/console.sol";
 
 contract ERC721PsiMockUpgradeable is ERC721PsiInitializable, ERC721PsiUpgradeable {
     
-    
-    function initialize(
-        string memory name_, 
-        string memory symbol_
-    ) initializerERC721Psi external {
-        __ERC721PsiMock_init(name_, symbol_);
-    }
-
     function __ERC721PsiMock_init(string memory name_, string memory symbol_) internal onlyInitializingERC721Psi {
         __ERC721Psi_init_unchained(name_, symbol_);
         __ERC721PsiMock_init_unchained(name_, symbol_);

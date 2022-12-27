@@ -19,13 +19,6 @@ contract ERC721PsiRandomSeedUpgradeableMock is ERC721PsiRandomSeedUpgradeable {
             subId = _subId;
         }
 
-    function initialize(
-        string memory name_, 
-        string memory symbol_
-    ) initializerERC721Psi external {
-       __ERC721PsiRandomSeedMock_init(name_, symbol_);
-    }
-
     function __ERC721PsiRandomSeedMock_init(string memory name_, string memory symbol_) internal onlyInitializingERC721Psi {
         __ERC721Psi_init_unchained(name_, symbol_);
         __ERC721PsiRandomSeedMock_init_unchained(name_, symbol_);

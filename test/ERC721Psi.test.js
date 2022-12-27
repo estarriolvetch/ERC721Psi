@@ -13,17 +13,7 @@ const createTestSuite = ({ contract, constructorArgs, initializer}) =>
 
     context(`${contract}`, function () {
       beforeEach(async function (){
-        if (contract.includes("Upgradeable")) { 
-          this.ERC721PsiImplementation = await ethers.getContractFactory(contract);
-          this.erc721psi = await upgrades.deployProxy(
-            this.ERC721PsiImplementation,
-            constructorArgs,
-            {initializer}
-          );
-        }
-        else {
-          this.erc721psi = await deployContract(contract, constructorArgs);
-        }
+        this.erc721psi = await deployContract(contract, constructorArgs);
         this.receiver = await deployContract('ERC721ReceiverMock', [
           RECEIVER_MAGIC_VALUE, 
           this.erc721psi.address
@@ -618,5 +608,4 @@ describe('ERC721PsiUpgradeable', createTestSuite({
 describe('ERC721PsiUpgradeable override _startTokenId()', createTestSuite({
   contract: 'ERC721PsiStartTokenIdMockUpgradeable',
   constructorArgs: ['ERC721Psi', 'ERC721Psi', 1],
-  initializer: "initializeWithStartTokenId"
 }));

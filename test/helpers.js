@@ -3,11 +3,8 @@ const { BigNumber } = require('ethers');
 
 const deployContract = async function (contractName, constructorArgs) {
   let factory;
-  try {
-    factory = await ethers.getContractFactory(contractName);
-  } catch (e) {
-    factory = await ethers.getContractFactory(contractName + 'UpgradeableWithInit');
-  }
+  if (contractName.includes("Upgradeable")) contractName = `${contractName}WithInit`;
+  factory = await ethers.getContractFactory(contractName);
   let contract = await factory.deploy(...(constructorArgs || []));
   await contract.deployed();
   return contract;

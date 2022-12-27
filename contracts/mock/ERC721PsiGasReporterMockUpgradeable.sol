@@ -7,13 +7,6 @@ import '../storage/ERC721PsiInitializable.sol';
 
 contract ERC721PsiGasReporterMockUpgradeable is ERC721PsiUpgradeable {
     
-    function initialize(
-        string memory name_, 
-        string memory symbol_
-    ) initializerERC721Psi external {
-       __ERC721PsiGasReporterMock_init(name_, symbol_);
-    }
-    
     function __ERC721PsiGasReporterMock_init(string memory name_, string memory symbol_)
         internal
         onlyInitializingERC721Psi

@@ -19,13 +19,13 @@ contract ERC721ReceiverMock is IERC721Receiver {
     }
 
     bytes4 private immutable _retval;
-    address private immutable _erc721aMock;
+    address private immutable _erc721psiMock;
 
     event Received(address operator, address from, uint256 tokenId, bytes data, uint256 gas);
 
-    constructor(bytes4 retval, address erc721aMock) {
+    constructor(bytes4 retval, address erc721psiMock) {
         _retval = retval;
-        _erc721aMock = erc721aMock;
+        _erc721psiMock = erc721psiMock;
     }
 
     function onERC721Received(
@@ -48,7 +48,7 @@ contract ERC721ReceiverMock is IERC721Receiver {
 
         // For testing the reentrancy protection.
         if (dataValue == 0x03) {
-            IERC721PsiMock(_erc721aMock).safeMint(address(this), 1);
+            IERC721PsiMock(_erc721psiMock).safeMint(address(this), 1);
         }
 
         emit Received(operator, from, tokenId, data, 20000);

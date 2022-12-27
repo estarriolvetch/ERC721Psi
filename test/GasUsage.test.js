@@ -4,17 +4,7 @@ const createTestSuite = ({ contract, constructorArgs, initializer}) =>
   function () {
     context(`${contract}`, function () {
       beforeEach(async function () {
-        if (contract.includes("Upgradeable")) {
-          this.ERC721PsiImplementation = await ethers.getContractFactory(contract);
-          this.erc721Psi = await upgrades.deployProxy(
-            this.ERC721PsiImplementation,
-            constructorArgs,
-            {initializer}
-          );
-        }
-        else {
-          this.erc721Psi = await deployContract(contract, constructorArgs);
-        }
+        this.erc721Psi = await deployContract(contract, constructorArgs);
         const [owner, addr1] = await ethers.getSigners();
         this.owner = owner;
         this.addr1 = addr1;
