@@ -13,30 +13,10 @@ pragma solidity ^0.8.0;
 
 import "solidity-bits/contracts/BitMaps.sol";
 import "../ERC721PsiUpgradeable.sol";
+import {ERC721PsiAddressDataStorage} from "../storage/ERC721PsiAddressDataStorage.sol";
 
-
-/**
-    @dev This extension follows the AddressData format of ERC721A, so
-    it can be a dropped-in replacement for the contract that requires AddressData
-*/ 
 abstract contract ERC721PsiAddressDataUpgradeable is ERC721PsiUpgradeable {
-    // Mapping owner address to address data
-    mapping(address => AddressData) _addressData;
-
-    // Compiler will pack this into a single 256bit word.
-    struct AddressData {
-        // Realistically, 2**64-1 is more than enough.
-        uint64 balance;
-        // Keeps track of mint count with minimal overhead for tokenomics.
-        uint64 numberMinted;
-        // Keeps track of burn count with minimal overhead for tokenomics.
-        uint64 numberBurned;
-        // For miscellaneous variable(s) pertaining to the address
-        // (e.g. number of whitelist mint slots used).
-        // If there are multiple variables, please pack them into a uint64.
-        uint64 aux;
-    }
-
+    using ERC721PsiAddressDataStorage for ERC721PsiAddressDataStorage.Layout;   
 
     /**
      * @dev See {IERC721-balanceOf}.
@@ -48,8 +28,8 @@ abstract contract ERC721PsiAddressDataUpgradeable is ERC721PsiUpgradeable {
         override 
         returns (uint) 
     {
-        require(owner != address(0), "ERC721Psi: balance query for the zero address");
-        return uint256(_addressData[owner].balance);   
+        if (owner == address(0)) revert BalanceQueryForZeroAddress();
+        return uint256(ERC721PsiAddressDataStorage.layout()._addressData[owner].balance);   
     }
 
     /**
@@ -74,17 +54,17 @@ abstract contract ERC721PsiAddressDataUpgradeable is ERC721PsiUpgradeable {
         uint64 _quantity = uint64(quantity);
 
         if(from != address(0)){
-            _addressData[from].balance -= _quantity;
+            ERC721PsiAddressDataStorage.layout()._addressData[from].balance -= _quantity;
         } else {
             // Mint
-            _addressData[to].numberMinted += _quantity;
+            ERC721PsiAddressDataStorage.layout()._addressData[to].numberMinted += _quantity;
         }
 
         if(to != address(0)){
-            _addressData[to].balance += _quantity;
+            ERC721PsiAddressDataStorage.layout()._addressData[to].balance += _quantity;
         } else {
             // Burn
-            _addressData[from].numberBurned += _quantity;
+            ERC721PsiAddressDataStorage.layout()._addressData[from].numberBurned += _quantity;
         }
         super._afterTokenTransfers(from, to, startTokenId, quantity);
     }
