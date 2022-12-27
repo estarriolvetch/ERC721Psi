@@ -15,8 +15,8 @@
 pragma solidity ^0.8.0;
 
 import "./interface/IERC721Psi.sol";
-import {ERC721PsiStorage} from "./ERC721PsiStorage.sol";
-import "./ERC721PsiInitializable.sol";
+import {ERC721PsiStorage} from "./storage/ERC721PsiStorage.sol";
+import "./storage/ERC721PsiInitializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "solidity-bits/contracts/BitMaps.sol";

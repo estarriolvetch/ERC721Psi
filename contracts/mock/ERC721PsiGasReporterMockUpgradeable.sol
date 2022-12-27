@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import '../ERC721PsiUpgradeable.sol';
-import '../ERC721PsiInitializable.sol';
+import '../storage/ERC721PsiInitializable.sol';
 
 contract ERC721PsiGasReporterMockUpgradeable is ERC721PsiUpgradeable {
     

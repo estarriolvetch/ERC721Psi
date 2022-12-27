@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 
 import './ERC721PsiMockUpgradeable.sol';
 import './StartTokenIdHelperUpgradeable.sol';
-import {StartTokenIdHelperStorage} from './StartTokenIdHelperStorage.sol';
-import '../ERC721PsiInitializable.sol';
+import {StartTokenIdHelperStorage} from './../storage/StartTokenIdHelperStorage.sol';
+import './../storage/ERC721PsiInitializable.sol';
 
 contract ERC721PsiStartTokenIdMockUpgradeable is
     ERC721PsiInitializable,

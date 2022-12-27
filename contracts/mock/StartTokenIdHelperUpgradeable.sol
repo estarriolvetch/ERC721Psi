@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import {StartTokenIdHelperStorage} from './StartTokenIdHelperStorage.sol';
-import '../ERC721PsiInitializable.sol';
+import {StartTokenIdHelperStorage} from '../storage/StartTokenIdHelperStorage.sol';
+import '../storage/ERC721PsiInitializable.sol';
 
 /**
  * This Helper is used to return a dynamic value in the overridden _startTokenId() function.

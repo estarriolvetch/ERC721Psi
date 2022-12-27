@@ -2,8 +2,6 @@
 
 pragma solidity ^0.8.0;
 
-import {StartTokenIdHelperUpgradeable} from './StartTokenIdHelperUpgradeable.sol';
-
 library StartTokenIdHelperStorage {
     struct Layout {
         uint256 startTokenId;

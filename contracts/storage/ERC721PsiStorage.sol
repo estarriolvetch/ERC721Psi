@@ -6,8 +6,6 @@ import "solidity-bits/contracts/BitMaps.sol";
 
 library ERC721PsiStorage {
 
-   
-
     struct Layout {
         // =============================================================
         //                            STORAGE

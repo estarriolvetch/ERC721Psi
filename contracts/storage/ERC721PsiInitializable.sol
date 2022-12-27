@@ -14,7 +14,31 @@ pragma solidity ^0.8.0;
  * that all initializers are idempotent. This is not verified automatically as constructors are by Solidity.
  */
 
-import {ERC721PsiInitializableStorage} from './ERC721PsiInitializableStorage.sol';
+/**
+ * @dev This is a base storage for the  initialization function for upgradeable diamond facet contracts
+ **/
+
+library ERC721PsiInitializableStorage {
+    struct Layout {
+        /*
+         * Indicates that the contract has been initialized.
+         */
+        bool _initialized;
+        /*
+         * Indicates that the contract is in the process of being initialized.
+         */
+        bool _initializing;
+    }
+
+    bytes32 internal constant STORAGE_SLOT = keccak256('ERC721Psi.contracts.storage.initializable.facet');
+
+    function layout() internal pure returns (Layout storage l) {
+        bytes32 slot = STORAGE_SLOT;
+        assembly {
+            l.slot := slot
+        }
+    }
+}
 
 abstract contract ERC721PsiInitializable {
     using ERC721PsiInitializableStorage for ERC721PsiInitializableStorage.Layout;
