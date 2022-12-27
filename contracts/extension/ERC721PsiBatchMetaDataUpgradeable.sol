@@ -15,18 +15,18 @@ pragma solidity ^0.8.0;
 
 import "../ERC721PsiUpgradeable.sol";
 import "solidity-bits/contracts/BitMaps.sol";
-
+import {ERC721PsiBatchMetaDataStorage} from "../storage/ERC721PsiBatchMetaDataStorage.sol";
 
 abstract contract ERC721PsiBatchMetaDataUpgradeable is ERC721PsiUpgradeable {
+    using ERC721PsiBatchMetaDataStorage for ERC721PsiBatchMetaDataStorage.Layout;
     using BitMaps for BitMaps.BitMap;
-    BitMaps.BitMap private _metaDataBatchHead;
 
     function _safeMint(
         address to,
         uint256 quantity,
         bytes memory _data
     ) internal virtual override {
-        _metaDataBatchHead.set(_nextTokenId());
+        ERC721PsiBatchMetaDataStorage.layout()._metaDataBatchHead.set(_nextTokenId());
         super._safeMint(to, quantity, _data);
     }
 
@@ -36,6 +36,6 @@ abstract contract ERC721PsiBatchMetaDataUpgradeable is ERC721PsiUpgradeable {
      *  The returned tokenId will remain the same after the token transfer.
      */
     function _getMetaDataBatchHead(uint256 tokenId) internal view returns (uint256 tokenIdMetaDataBatchHead) {
-        tokenIdMetaDataBatchHead = _metaDataBatchHead.scanForward(tokenId);
+        tokenIdMetaDataBatchHead = ERC721PsiBatchMetaDataStorage.layout()._metaDataBatchHead.scanForward(tokenId);
     }
 }

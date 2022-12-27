@@ -13,11 +13,8 @@ pragma solidity ^0.8.0;
 
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
-
 import "../interface/IERC721RandomSeed.sol";
-
 import "./ERC721PsiBatchMetaData.sol";
-
 
 abstract contract ERC721PsiRandomSeedReveal is IERC721RandomSeed, ERC721PsiBatchMetaData, VRFConsumerBaseV2 {
     // Chainklink VRF V2

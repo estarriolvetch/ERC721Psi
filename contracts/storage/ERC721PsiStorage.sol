@@ -7,14 +7,8 @@ import "solidity-bits/contracts/BitMaps.sol";
 library ERC721PsiStorage {
 
     struct Layout {
-        // =============================================================
-        //                            STORAGE
-        // =============================================================
-
         // The next token ID to be minted.
         uint256 _currentIndex;
-        // The number of tokens burned.
-        uint256 _burnCounter;
         // Token name
         string _name;
         // Token symbol
@@ -29,7 +23,7 @@ library ERC721PsiStorage {
         BitMaps.BitMap _batchHead;
     }
 
-    bytes32 internal constant STORAGE_SLOT = keccak256('ERC721Psi.contracts.storage.ERC721A');
+    bytes32 internal constant STORAGE_SLOT = keccak256('ERC721Psi.contracts.storage.ERC721Psi');
 
     function layout() internal pure returns (Layout storage l) {
         bytes32 slot = STORAGE_SLOT;
