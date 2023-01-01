@@ -113,7 +113,7 @@ const createTestSuite = ({ contract, constructorArgs }) =>
         const query = this.erc721psiBurnable
           .connect(this.addr1)
           .transferFrom(this.addr1.address, this.addr2.address, this.burnedTokenId);
-        await expect(query).to.be.revertedWith('OwnerQueryForNonexistentToken');
+        await expect(query).to.be.revertedWithCustomError(this.erc721psiBurnable, 'OwnerQueryForNonexistentToken');
       });
 
       it('does not affect _totalMinted', async function () {
@@ -139,7 +139,7 @@ const createTestSuite = ({ contract, constructorArgs }) =>
           await this.erc721psiBurnable.connect(this.addr2)['burn(uint256)'](tokenIdToBurn);
           for (let i = offsetted(0); i < offsetted(this.numTestTokens); ++i) {
             if (i == tokenIdToBurn || i == this.burnedTokenId) {
-              await expect(this.erc721psiBurnable.ownerOf(i)).to.be.revertedWith('OwnerQueryForNonexistentToken');
+              expect(await this.erc721psiBurnable.ownerOf(i)).to.be.equal(ZERO_ADDRESS);
             } else {
               expect(await this.erc721psiBurnable.ownerOf(i)).to.be.equal(this.addr1.address);
             }
@@ -155,7 +155,7 @@ const createTestSuite = ({ contract, constructorArgs }) =>
           await this.erc721psiBurnable.connect(this.addr2)['burn(uint256)'](tokenIdToBurn);
           for (let i = offsetted(0); i < offsetted(this.numTestTokens); ++i) {
             if (i == tokenIdToBurn || i == this.burnedTokenId) {
-              await expect(this.erc721psiBurnable.ownerOf(i)).to.be.revertedWith('OwnerQueryForNonexistentToken');
+              expect(await this.erc721psiBurnable.ownerOf(i)).to.be.equal(ZERO_ADDRESS);
             } else {
               expect(await this.erc721psiBurnable.ownerOf(i)).to.be.equal(this.addr1.address);
             }
@@ -166,7 +166,7 @@ const createTestSuite = ({ contract, constructorArgs }) =>
           await this.erc721psiBurnable.connect(this.addr1)['burn(uint256)'](offsetted(0));
           for (let i = offsetted(0); i < offsetted(this.numTestTokens); ++i) {
             if (i == offsetted(0).toNumber() || i == this.burnedTokenId) {
-              await expect(this.erc721psiBurnable.ownerOf(i)).to.be.revertedWith('OwnerQueryForNonexistentToken');
+              expect(await this.erc721psiBurnable.ownerOf(i)).to.be.equal(ZERO_ADDRESS);
             } else {
               expect(await this.erc721psiBurnable.ownerOf(i)).to.be.equal(this.addr1.address);
             }
@@ -174,13 +174,12 @@ const createTestSuite = ({ contract, constructorArgs }) =>
         });
 
         it('with last token burned', async function () {
-          await expect(this.erc721psiBurnable.ownerOf(offsetted(this.numTestTokens))).to.be.revertedWith(
+          await expect(this.erc721psiBurnable.ownerOf(offsetted(this.numTestTokens))).to.be.revertedWithCustomError(
+            this.erc721psiBurnable,
             'OwnerQueryForNonexistentToken'
           );
           await this.erc721psiBurnable.connect(this.addr1)['burn(uint256)'](offsetted(this.numTestTokens - 1));
-          await expect(this.erc721psiBurnable.ownerOf(offsetted(this.numTestTokens - 1))).to.be.revertedWith(
-            'OwnerQueryForNonexistentToken'
-          );
+          expect(await this.erc721psiBurnable.ownerOf(offsetted(this.numTestTokens - 1))).to.be.equal(ZERO_ADDRESS);
         });
       });
     });

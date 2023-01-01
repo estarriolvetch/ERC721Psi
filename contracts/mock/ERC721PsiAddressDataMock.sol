@@ -6,6 +6,7 @@ import '../extension/ERC721PsiAddressData.sol';
 import "hardhat/console.sol";
 
 contract ERC721PsiAddressDataMock is ERC721PsiAddressData {
+    
     constructor(string memory name_, string memory symbol_) ERC721Psi(name_, symbol_) {}
 
     function baseURI() public view returns (string memory) {
@@ -32,6 +33,15 @@ contract ERC721PsiAddressDataMock is ERC721PsiAddressData {
         uint256 tokenId
     ) public view {
         _getBatchHead(tokenId);
+    }
+
+    function numberMinted(address owner) 
+        public 
+        view 
+        returns (uint) 
+    {
+        if (owner == address(0)) revert BalanceQueryForZeroAddress();
+        return uint256(_addressData[owner].numberMinted);   
     }
 
     function benchmarkOwnerOf(uint256 tokenId) public view returns (address owner) {

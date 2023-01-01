@@ -54,6 +54,24 @@ abstract contract ERC721PsiBurnable is ERC721Psi {
     }
 
     /**
+     * @dev See {IERC721-ownerOf}.
+     */
+    function ownerOf(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
+        if (_burnedToken.get(tokenId)) {
+            return address(0);
+        }
+        else {
+            return super.ownerOf(tokenId);
+        }
+    }
+
+    /**
      * @dev See {IERC721Enumerable-totalSupply}.
      */
     function totalSupply() public view virtual override returns (uint256) {

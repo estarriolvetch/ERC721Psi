@@ -36,7 +36,6 @@ abstract contract ERC721PsiAddressData is ERC721Psi {
         uint64 aux;
     }
 
-
     /**
      * @dev See {IERC721-balanceOf}.
      */

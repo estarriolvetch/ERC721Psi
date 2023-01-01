@@ -27,4 +27,8 @@ const offsettedIndex = function (startTokenId, arr) {
   return arr.map((num) => BigNumber.from(startTokenId + num));
 };
 
-module.exports = { deployContract, getBlockTimestamp, mineBlockTimestamp, offsettedIndex };
+const bigNumbersToNumbers = function(bigNumbers) {
+  return bigNumbers.map(t => t.toNumber());
+}
+
+module.exports = { deployContract, getBlockTimestamp, mineBlockTimestamp, offsettedIndex, bigNumbersToNumbers };
