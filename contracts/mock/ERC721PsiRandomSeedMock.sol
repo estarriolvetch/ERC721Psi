@@ -64,6 +64,4 @@ contract ERC721PsiRandomSeedMock is ERC721PsiRandomSeed {
         uint256 gasAfter = gasleft();
         console.log(gasBefore - gasAfter);
     }
-
-    
 }

@@ -19,6 +19,10 @@ contract ERC721PsiRandomSeedRevealUpgradeableMock is ERC721PsiRandomSeedRevealUp
             subId = _subId;
         }
 
+    function initialize(string memory name_, string memory symbol_) public initializerERC721Psi  {
+        __ERC721PsiRandomSeedRevealMock_init(name_, symbol_);
+    }
+    
     function __ERC721PsiRandomSeedRevealMock_init(string memory name_, string memory symbol_) internal onlyInitializingERC721Psi {
         __ERC721Psi_init_unchained(name_, symbol_);
         __ERC721PsiRandomSeedRevealMock_init_unchained(name_, symbol_);
@@ -29,6 +33,7 @@ contract ERC721PsiRandomSeedRevealUpgradeableMock is ERC721PsiRandomSeedRevealUp
     function _keyHash() internal override returns (bytes32){
         return bytes32(0);
     }
+
     function _subscriptionId() internal override returns (uint64) {
         return subId;
     }
@@ -79,6 +84,4 @@ contract ERC721PsiRandomSeedRevealUpgradeableMock is ERC721PsiRandomSeedRevealUp
         uint256 gasAfter = gasleft();
         console.log(gasBefore - gasAfter);
     }
-
-    
 }

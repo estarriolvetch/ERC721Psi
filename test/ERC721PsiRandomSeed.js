@@ -68,38 +68,80 @@ const createTestSuite = ({ contract, constructorArgs}) =>
               "SeedQueryForNonExistentToken"
             )
           });
+  
+          if (contract.includes("Reveal")) {
+            context('Reveal the seed', function () {
+              beforeEach(async function () {
+                let txReveal = await this.ERC721Psi["reveal()"]();
+                txReveal = await txReveal.wait();
 
-          context('Reveal the seed', function () {
-            beforeEach(async function () {
+                await this.vrfCoordinator["fulfillRandomWords(uint256,address)"](
+                  txReveal.events[1].args.requestId,
+                  this.ERC721Psi.address
+                );
 
-              await this.vrfCoordinator["fulfillRandomWords(uint256,address)"](
-                this.txMint2.events[1].args.requestId,
-                this.ERC721Psi.address
-              ); // Corrosponding tokens in the batch: 1 and 2
+                // tokenId = 6
+                await this.ERC721Psi['safeMint(address,uint256)'](this.addr1.address, 1);
+              });
+
+              it('non-zero seed after the randomness has been fulfilled', async function () {
+                expect(await this.ERC721Psi.seed('0')).to.not.equal("0");
+                expect(await this.ERC721Psi.seed('1')).to.not.equal("0");
+                expect(await this.ERC721Psi.seed('2')).to.not.equal("0");
+                expect(await this.ERC721Psi.seed('3')).to.not.equal("0");
+                expect(await this.ERC721Psi.seed('4')).to.not.equal("0");
+                expect(await this.ERC721Psi.seed('5')).to.not.equal("0");
+              });
+
+              it('invalid seed before the randomness has been fulfilled', async function () {
+                // tokenId = 6 belongs to the next generation whcih its randomness hasn't bee fullfilled.
+                await expect(this.ERC721Psi.seed('6')).to.be.revertedWithCustomError(
+                  this.ERC721Psi,
+                  "RandomnessHasntBeenFulfilled"
+                )
+              });
+
+              it('seed query for nonexistent token', async function () {
+                await expect(this.ERC721Psi.seed('7')).to.be.revertedWithCustomError(
+                  this.ERC721Psi,
+                  "SeedQueryForNonExistentToken"
+                );
+              });
+            });
+          }
+          else {
+            context('Reveal the seed', function () {
+              beforeEach(async function () {
+
+                await this.vrfCoordinator["fulfillRandomWords(uint256,address)"](
+                  this.txMint2.events[1].args.requestId,
+                  this.ERC721Psi.address
+                ); // Corrosponding tokens in the batch: 1 and 2
+
+              });
+
+              it('non-zero seed after the randomness has been fulfilled', async function () {
+                await expect(this.ERC721Psi.seed('0')).to.be.revertedWithCustomError(
+                  this.ERC721Psi,
+                  "RandomnessHasntBeenFulfilled"
+                )
+                expect(await this.ERC721Psi.seed('1')).to.not.equal("0");
+                expect(await this.ERC721Psi.seed('2')).to.not.equal("0");
+                await expect(this.ERC721Psi.seed('3')).to.be.revertedWithCustomError(
+                  this.ERC721Psi,
+                  "RandomnessHasntBeenFulfilled"
+                );
+              });
+
+              it('seed query for nonexistent token', async function () {
+                await expect(this.ERC721Psi.seed('6')).to.be.revertedWithCustomError(
+                  this.ERC721Psi,
+                  "SeedQueryForNonExistentToken"
+                );
+              });
 
             });
-
-            it('non-zero seed after the randomness has been fulfilled', async function () {
-              await expect(this.ERC721Psi.seed('0')).to.be.revertedWithCustomError(
-                this.ERC721Psi,
-                "RandomnessHasntBeenFulfilled"
-              )
-              expect(await this.ERC721Psi.seed('1')).to.not.equal("0");
-              expect(await this.ERC721Psi.seed('2')).to.not.equal("0");
-              await expect(this.ERC721Psi.seed('3')).to.be.revertedWithCustomError(
-                this.ERC721Psi,
-                "RandomnessHasntBeenFulfilled"
-              );
-            });
-
-            it('seed query for nonexistent token', async function () {
-              await expect(this.ERC721Psi.seed('6')).to.be.revertedWithCustomError(
-                this.ERC721Psi,
-                "SeedQueryForNonExistentToken"
-              );
-            });
-
-          });
+          }
         });
       });
     });
@@ -111,5 +153,13 @@ describe('ERC721PsiRandomSeed', createTestSuite({
 }));
 describe('ERC721PsiRandomSeedUpgradeable', createTestSuite({
   contract: 'ERC721PsiRandomSeedUpgradeableMock',
+  constructorArgs: ['ERC721Psi', 'ERC721Psi'],
+}));
+describe('ERC721PsiRandomSeedReveal', createTestSuite({
+  contract: 'ERC721PsiRandomSeedRevealMock',
+  constructorArgs: ['ERC721Psi', 'ERC721Psi'],
+}));
+describe('ERC721PsiRandomSeedRevealUpgradeable', createTestSuite({
+  contract: 'ERC721PsiRandomSeedRevealUpgradeableMock',
   constructorArgs: ['ERC721Psi', 'ERC721Psi'],
 }));

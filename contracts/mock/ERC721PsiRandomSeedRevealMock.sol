@@ -71,7 +71,5 @@ contract ERC721PsiRandomSeedRevealMock is ERC721PsiRandomSeedReveal {
         owner = ownerOf(tokenId);
         uint256 gasAfter = gasleft();
         console.log(gasBefore - gasAfter);
-    }
-
-    
+    } 
 }
