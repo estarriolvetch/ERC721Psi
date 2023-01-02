@@ -27,6 +27,8 @@ abstract contract ERC721PsiRandomSeedRevealUpgradeable is IERC721RandomSeed, ERC
     uint16 constant numWords = 1;
     
     event RandomnessRequest(uint256 requestId);
+
+    error GenerationQueryForNonExistentToken();
     
     constructor(
         address coordinator,
@@ -64,7 +66,7 @@ abstract contract ERC721PsiRandomSeedRevealUpgradeable is IERC721RandomSeed, ERC
         @dev Query the generation of `tokenId`.
      */
     function _tokenGen(uint256 tokenId) internal view returns (uint256) {
-        require(_exists(tokenId), "ERC721PsiRandomSeedReveal: generation query for nonexistent token");
+        if(!_exists(tokenId)) revert GenerationQueryForNonExistentToken();
         return ERC721PsiRandomSeedRevealStorage.layout()._batchHeadtokenGen[_getMetaDataBatchHead(tokenId)];
     } 
 
@@ -92,11 +94,11 @@ abstract contract ERC721PsiRandomSeedRevealUpgradeable is IERC721RandomSeed, ERC
         Revert when the randomness hasn't been fulfilled.
      */
     function seed(uint256 tokenId) public virtual override view returns (uint256){
-        require(_exists(tokenId), "ERC721PsiRandomSeedReveal: seed query for nonexistent token");
+        if (!_exists(tokenId)) revert SeedQueryForNonExistentToken();
         
         unchecked {
             uint256 _genSeed = ERC721PsiRandomSeedRevealStorage.layout().genSeed[_tokenGen(tokenId)];
-            require(_genSeed != 0, "ERC721PsiRandomSeedReveal: Randomness hasn't been fullfilled");
+            if(_genSeed == 0) revert RandomnessHasntBeenFulfilled();
             return uint256(keccak256(
                 abi.encode(_genSeed, tokenId)
             ));

@@ -94,12 +94,12 @@ abstract contract ERC721PsiRandomSeedUpgradeable is IERC721RandomSeed, ERC721Psi
         Revert when the randomness hasn't been fulfilled.
      */
     function seed(uint256 tokenId) public virtual override view returns (uint256){
-        require(_exists(tokenId), "ERC721PsiRandomSeed: seed query for nonexistent token");
+        if (!_exists(tokenId)) revert SeedQueryForNonExistentToken();
         uint256 tokenIdMetaDataBatchHead = _getMetaDataBatchHead(tokenId);
 
         unchecked {
             uint256 _batchSeed = ERC721PsiRandomSeedStorage.layout().batchSeed[tokenIdMetaDataBatchHead];
-            require(_batchSeed != 0, "ERC721PsiRandomSeed: Randomness hasn't been fullfilled.");
+            if(_batchSeed == 0) revert RandomnessHasntBeenFulfilled();
             return uint256(keccak256(
                 abi.encode(_batchSeed, tokenId)
             ));
