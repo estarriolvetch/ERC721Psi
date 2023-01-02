@@ -486,7 +486,7 @@ contract ERC721Psi is IERC721Psi {
     }
 
 
-    function totalSupply() public virtual view returns (uint256) {
+    function totalSupply() public virtual override view returns (uint256) {
         return _totalMinted();
     }
 
