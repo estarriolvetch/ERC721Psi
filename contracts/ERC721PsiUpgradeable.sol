@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 /**
-  ______ _____   _____ ______ ___  __ _  _  _ 
+  ______ _____   _____ ______ ___  __ _  _  _
  |  ____|  __ \ / ____|____  |__ \/_ | || || |
  | |__  | |__) | |        / /   ) || | \| |/ |
- |  __| |  _  /| |       / /   / / | |\_   _/ 
- | |____| | \ \| |____  / /   / /_ | |  | |   
- |______|_|  \_\\_____|/_/   |____||_|  |_|   
+ |  __| |  _  /| |       / /   / / | |\_   _/
+ | |____| | \ \| |____  / /   / /_ | |  | |
+ |______|_|  \_\\_____|/_/   |____||_|  |_|
 
  - github: https://github.com/estarriolvetch/ERC721Psi
  - npm: https://www.npmjs.com/package/erc721psi
-                                          
+
  */
 
 pragma solidity ^0.8.0;
@@ -69,7 +69,7 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
      */
     function _totalMinted() internal view virtual returns (uint256) {
         unchecked {
-            return ERC721PsiStorage.layout()._currentIndex - _startTokenId();       
+            return ERC721PsiStorage.layout()._currentIndex - _startTokenId();
         }
     }
 
@@ -96,12 +96,12 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
     /**
      * @dev See {IERC721-balanceOf}.
      */
-    function balanceOf(address owner) 
-        public 
-        view 
-        virtual 
-        override 
-        returns (uint) 
+    function balanceOf(address owner)
+        public
+        view
+        virtual
+        override
+        returns (uint)
     {
         if(owner == address(0)) revert BalanceQueryForZeroAddress();
 
@@ -193,7 +193,7 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
         view
         virtual
         override
-        returns (address) 
+        returns (address)
     {
         if (!_exists(tokenId)) revert ApprovalQueryForNonexistentToken();
 
@@ -337,7 +337,7 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
         _safeMint(to, quantity, "");
     }
 
-    
+
     function _safeMint(
         address to,
         uint256 quantity,
@@ -358,20 +358,20 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
         uint256 quantity
     ) internal virtual {
         uint256 nextTokenId = _nextTokenId();
-        
+
         if (quantity == 0) revert MintZeroQuantity();
         if (to == address(0)) revert MintToZeroAddress();
-        
+
         _beforeTokenTransfers(address(0), to, nextTokenId, quantity);
         ERC721PsiStorage.layout()._currentIndex += quantity;
         ERC721PsiStorage.layout()._owners[nextTokenId] = to;
         ERC721PsiStorage.layout()._batchHead.set(nextTokenId);
         _afterTokenTransfers(address(0), to, nextTokenId, quantity);
-        
+
         // Emit events
         for(uint256 tokenId=nextTokenId; tokenId < nextTokenId + quantity; tokenId++){
             emit Transfer(address(0), to, tokenId);
-        } 
+        }
     }
 
 
@@ -405,11 +405,11 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
         _beforeTokenTransfers(from, to, tokenId, 1);
 
         // Clear approvals from the previous owner
-        _approve(address(0), tokenId);   
+        _approve(address(0), tokenId);
 
         uint256 subsequentTokenId = tokenId + 1;
 
-        if(!ERC721PsiStorage.layout()._batchHead.get(subsequentTokenId) &&  
+        if(!ERC721PsiStorage.layout()._batchHead.get(subsequentTokenId) &&
             subsequentTokenId < _nextTokenId()
         ) {
             ERC721PsiStorage.layout()._owners[subsequentTokenId] = from;
@@ -476,7 +476,7 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
     }
 
     function _getBatchHead(uint256 tokenId) internal view returns (uint256 tokenIdBatchHead) {
-        tokenIdBatchHead = ERC721PsiStorage.layout()._batchHead.scanForward(tokenId); 
+        tokenIdBatchHead = ERC721PsiStorage.layout()._batchHead.scanForward(tokenId);
     }
 
 
@@ -504,7 +504,7 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
                     }
                 }
             }
-            return tokenIds;   
+            return tokenIds;
         }
     }
 
