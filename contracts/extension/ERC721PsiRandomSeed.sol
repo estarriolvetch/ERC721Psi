@@ -13,14 +13,10 @@ pragma solidity ^0.8.0;
 
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
-
 import "../interface/IERC721RandomSeed.sol";
-
 import "./ERC721PsiBatchMetaData.sol";
 
-
 abstract contract ERC721PsiRandomSeed is IERC721RandomSeed, ERC721PsiBatchMetaData, VRFConsumerBaseV2 {
-
     // Chainklink VRF V2
     VRFCoordinatorV2Interface immutable COORDINATOR;
     uint32 immutable callbackGasLimit;
@@ -101,12 +97,12 @@ abstract contract ERC721PsiRandomSeed is IERC721RandomSeed, ERC721PsiBatchMetaDa
         Revert when the randomness hasn't been fulfilled.
      */
     function seed(uint256 tokenId) public virtual override view returns (uint256){
-        require(_exists(tokenId), "ERC721PsiRandomSeed: seed query for nonexistent token");
+        if (!_exists(tokenId)) revert SeedQueryForNonExistentToken();
         uint256 tokenIdMetaDataBatchHead = _getMetaDataBatchHead(tokenId);
 
         unchecked {
             uint256 _batchSeed = batchSeed[tokenIdMetaDataBatchHead];
-            require(_batchSeed != 0, "ERC721PsiRandomSeed: Randomness hasn't been fullfilled.");
+            if(_batchSeed == 0) revert RandomnessHasntBeenFulfilled();
             return uint256(keccak256(
                 abi.encode(_batchSeed, tokenId)
             ));

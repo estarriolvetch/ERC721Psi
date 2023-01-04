@@ -14,7 +14,6 @@ pragma solidity ^0.8.0;
 import "solidity-bits/contracts/BitMaps.sol";
 import "../ERC721Psi.sol";
 
-
 /**
     @dev This extension follows the AddressData format of ERC721A, so
     it can be a dropped-in replacement for the contract that requires AddressData
@@ -37,7 +36,6 @@ abstract contract ERC721PsiAddressData is ERC721Psi {
         uint64 aux;
     }
 
-
     /**
      * @dev See {IERC721-balanceOf}.
      */
@@ -48,7 +46,7 @@ abstract contract ERC721PsiAddressData is ERC721Psi {
         override 
         returns (uint) 
     {
-        require(owner != address(0), "ERC721Psi: balance query for the zero address");
+        if (owner == address(0)) revert BalanceQueryForZeroAddress();
         return uint256(_addressData[owner].balance);   
     }
 

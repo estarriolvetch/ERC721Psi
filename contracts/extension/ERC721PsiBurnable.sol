@@ -14,7 +14,6 @@ pragma solidity ^0.8.0;
 import "solidity-bits/contracts/BitMaps.sol";
 import "../ERC721Psi.sol";
 
-
 abstract contract ERC721PsiBurnable is ERC721Psi {
     using BitMaps for BitMaps.BitMap;
     BitMaps.BitMap private _burnedToken;
@@ -52,6 +51,24 @@ abstract contract ERC721PsiBurnable is ERC721Psi {
             return false;
         } 
         return super._exists(tokenId);
+    }
+
+    /**
+     * @dev See {IERC721-ownerOf}.
+     */
+    function ownerOf(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
+        if (_burnedToken.get(tokenId)) {
+            return address(0);
+        }
+        else {
+            return super.ownerOf(tokenId);
+        }
     }
 
     /**
