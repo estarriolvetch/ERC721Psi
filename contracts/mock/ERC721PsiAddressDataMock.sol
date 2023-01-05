@@ -5,10 +5,9 @@ pragma solidity ^0.8.0;
 import '../extension/ERC721PsiAddressData.sol';
 import "hardhat/console.sol";
 
-
 contract ERC721PsiAddressDataMock is ERC721PsiAddressData {
+    
     constructor(string memory name_, string memory symbol_) ERC721Psi(name_, symbol_) {}
-
 
     function baseURI() public view returns (string memory) {
         return _baseURI();
@@ -36,7 +35,16 @@ contract ERC721PsiAddressDataMock is ERC721PsiAddressData {
         _getBatchHead(tokenId);
     }
 
-    function benchmarkOwnerOf(uint256 tokenId) public returns (address owner) {
+    function numberMinted(address owner) 
+        public 
+        view 
+        returns (uint) 
+    {
+        if (owner == address(0)) revert BalanceQueryForZeroAddress();
+        return uint256(_addressData[owner].numberMinted);   
+    }
+
+    function benchmarkOwnerOf(uint256 tokenId) public view returns (address owner) {
         uint256 gasBefore = gasleft();
         owner = ownerOf(tokenId);
         uint256 gasAfter = gasleft();

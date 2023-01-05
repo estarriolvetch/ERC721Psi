@@ -14,6 +14,18 @@ contract ERC721PsiBurnableMock is ERC721PsiBurnable {
         return _baseURI();
     }
 
+    function totalMinted() public view returns(uint256) {
+        return super._totalMinted();
+    }
+
+    function numberMinted(address user) public view returns(uint256) {
+        return balanceOf(user);
+    }
+
+    function totalBurned() external view returns (uint256){
+        return _burned();
+    }
+
     function exists(uint256 tokenId) public view returns (bool) {
         return _exists(tokenId);
     }
@@ -39,11 +51,14 @@ contract ERC721PsiBurnableMock is ERC721PsiBurnable {
     function burn(
         uint256 tokenId
     ) public {
+        if (!_exists(tokenId)) revert OwnerQueryForNonexistentToken();
+        if (!_isApprovedOrOwner(_msgSenderERC721Psi(), tokenId)) {
+             revert TransferCallerNotOwnerNorApproved();
+        }
         _burn(tokenId);
     }
 
-
-    function benchmarkOwnerOf(uint256 tokenId) public returns (address owner) {
+    function benchmarkOwnerOf(uint256 tokenId) public view returns (address owner) {
         uint256 gasBefore = gasleft();
         owner = ownerOf(tokenId);
         uint256 gasAfter = gasleft();

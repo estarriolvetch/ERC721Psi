@@ -1,6 +1,11 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-truffle5");
 require('@openzeppelin/hardhat-upgrades');
+require("@nomicfoundation/hardhat-chai-matchers");
+
+if (process.env.REPORT_GAS) {
+  require('hardhat-gas-reporter');
+}
 
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -46,5 +51,11 @@ module.exports = {
           runs: 200
         }
       }
-    }]},
+    }]
+  },
+  gasReporter: {
+    currency: 'USD',
+    gasPrice: 100,
+    showTimeSpent: true,
+  },
 };

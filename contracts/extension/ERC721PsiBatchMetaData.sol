@@ -16,7 +16,6 @@ pragma solidity ^0.8.0;
 import "../ERC721Psi.sol";
 import "solidity-bits/contracts/BitMaps.sol";
 
-
 abstract contract ERC721PsiBatchMetaData is ERC721Psi {
     using BitMaps for BitMaps.BitMap;
     BitMaps.BitMap private _metaDataBatchHead;

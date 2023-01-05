@@ -14,6 +14,18 @@ contract ERC721PsiMock is ERC721Psi {
         return _baseURI();
     }
 
+    function totalMinted() public view returns(uint256) {
+        return super._totalMinted();
+    }
+
+    function numberMinted(address user) public view returns(uint256) {
+        return balanceOf(user);
+    }
+
+    function nextTokenId() public view returns(uint256) {
+        return super._nextTokenId();
+    }
+
     function exists(uint256 tokenId) public view returns (bool) {
         return _exists(tokenId);
     }
@@ -30,19 +42,24 @@ contract ERC721PsiMock is ERC721Psi {
         _safeMint(to, quantity, _data);
     }
 
+    function mint(address to, uint256 quantity) public {
+        _mint(to, quantity);
+    }
+    
     function getBatchHead(
         uint256 tokenId
     ) public view {
         _getBatchHead(tokenId);
     }
 
+    function directApprove(address to, uint256 tokenId) public {
+        _approve(to, tokenId);
+    }
 
-    function benchmarkOwnerOf(uint256 tokenId) public returns (address owner) {
+    function benchmarkOwnerOf(uint256 tokenId) public view returns (address owner) {
         uint256 gasBefore = gasleft();
         owner = ownerOf(tokenId);
         uint256 gasAfter = gasleft();
         console.log(gasBefore - gasAfter);
     }
-
-    
 }

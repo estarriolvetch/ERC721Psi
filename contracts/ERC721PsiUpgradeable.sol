@@ -14,36 +14,27 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721EnumerableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
+import "./interface/IERC721Psi.sol";
+import {ERC721PsiStorage} from "./storage/ERC721PsiStorage.sol";
+import "./storage/ERC721PsiInitializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "solidity-bits/contracts/BitMaps.sol";
 
+interface ERC721PsiUpgradeable__IERC721Receiver {
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external returns (bytes4);
+}
 
-contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable, 
-    ERC165Upgradeable, IERC721Upgradeable, IERC721MetadataUpgradeable {
-    
+contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
+    using ERC721PsiStorage for ERC721PsiStorage.Layout;
     using AddressUpgradeable for address;
     using StringsUpgradeable for uint256;
     using BitMaps for BitMaps.BitMap;
-
-    BitMaps.BitMap private _batchHead;
-
-    string private _name;
-    string private _symbol;
-
-    // Mapping from token ID to owner address
-    mapping(uint256 => address) internal _owners;
-    uint256 private _currentIndex;
-
-    mapping(uint256 => address) private _tokenApprovals;
-    mapping(address => mapping(address => bool)) private _operatorApprovals;
 
     // The mask of the lower 160 bits for addresses.
     uint256 private constant _BITMASK_ADDRESS = (1 << 160) - 1;
@@ -55,22 +46,21 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
-    function __ERC721Psi_init(string memory name_, string memory symbol_) internal onlyInitializing {
+    function __ERC721Psi_init(string memory name_, string memory symbol_) internal onlyInitializingERC721Psi {
         __ERC721Psi_init_unchained(name_, symbol_);
     }
 
-    function __ERC721Psi_init_unchained(string memory name_, string memory symbol_) internal onlyInitializing {
-        _name = name_;
-        _symbol = symbol_;
-        _currentIndex = _startTokenId();
+    function __ERC721Psi_init_unchained(string memory name_, string memory symbol_) internal onlyInitializingERC721Psi {
+        ERC721PsiStorage.layout()._name = name_;
+        ERC721PsiStorage.layout()._symbol = symbol_;
+        ERC721PsiStorage.layout()._currentIndex = _startTokenId();
     }
 
     /**
      * @dev Returns the starting token ID.
      * To change the starting token ID, please override this function.
      */
-    function _startTokenId() internal pure returns (uint256) {
-        // It will become modifiable in the future versions
+    function _startTokenId() internal view virtual returns (uint256) {
         return 0;
     }
 
@@ -78,32 +68,36 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
      * @dev Returns the next token ID to be minted.
      */
     function _nextTokenId() internal view virtual returns (uint256) {
-        return _currentIndex;
+        return ERC721PsiStorage.layout()._currentIndex;
     }
 
     /**
      * @dev Returns the total amount of tokens minted in the contract.
      */
     function _totalMinted() internal view virtual returns (uint256) {
-        return _currentIndex - _startTokenId();
+        unchecked {
+            return ERC721PsiStorage.layout()._currentIndex - _startTokenId();       
+        }
     }
 
 
     /**
-     * @dev See {IERC165-supportsInterface}.
+     * @dev Returns true if this contract implements the interface defined by
+     * `interfaceId`. See the corresponding
+     * [EIP section](https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified)
+     * to learn more about how these ids are created.
+     *
+     * This function call must use less than 30000 gas.
      */
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(ERC165Upgradeable, IERC165Upgradeable)
-        returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+        // The interface IDs are constants representing the first 4 bytes
+        // of the XOR of all function selectors in the interface.
+        // See: [ERC165](https://eips.ethereum.org/EIPS/eip-165)
+        // (e.g. `bytes4(i.functionA.selector ^ i.functionB.selector ^ ...)`)
         return
-            interfaceId == type(IERC721Upgradeable).interfaceId ||
-            interfaceId == type(IERC721MetadataUpgradeable).interfaceId ||
-            interfaceId == type(IERC721EnumerableUpgradeable).interfaceId ||
-            super.supportsInterface(interfaceId);
+            interfaceId == 0x01ffc9a7 || // ERC165 interface ID for ERC165.
+            interfaceId == 0x80ac58cd || // ERC165 interface ID for ERC721.
+            interfaceId == 0x5b5e139f; // ERC165 interface ID for ERC721Metadata.
     }
 
     /**
@@ -116,7 +110,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         override 
         returns (uint) 
     {
-        require(owner != address(0), "ERC721Psi: balance query for the zero address");
+        if(owner == address(0)) revert BalanceQueryForZeroAddress();
 
         uint count;
         for( uint i = _startTokenId(); i < _nextTokenId(); ++i ){
@@ -144,33 +138,33 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
     }
 
     function _ownerAndBatchHeadOf(uint256 tokenId) internal view returns (address owner, uint256 tokenIdBatchHead){
-        require(_exists(tokenId), "ERC721Psi: owner query for nonexistent token");
+        if (!_exists(tokenId)) revert OwnerQueryForNonexistentToken();
         tokenIdBatchHead = _getBatchHead(tokenId);
-        owner = _owners[tokenIdBatchHead];
+        owner = ERC721PsiStorage.layout()._owners[tokenIdBatchHead];
     }
 
     /**
      * @dev See {IERC721Metadata-name}.
      */
     function name() public view virtual override returns (string memory) {
-        return _name;
+        return ERC721PsiStorage.layout()._name;
     }
 
     /**
      * @dev See {IERC721Metadata-symbol}.
      */
     function symbol() public view virtual override returns (string memory) {
-        return _symbol;
+        return ERC721PsiStorage.layout()._symbol;
     }
 
+
     /**
-     * @dev See {IERC721Metadata-tokenURI}.
+     * @dev Returns the Uniform Resource Identifier (URI) for `tokenId` token.
      */
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        require(_exists(tokenId), "ERC721Psi: URI query for nonexistent token");
-
+        if (!_exists(tokenId)) revert URIQueryForNonexistentToken();
         string memory baseURI = _baseURI();
-        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
+        return bytes(baseURI).length != 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : '';
     }
 
     /**
@@ -186,14 +180,14 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
     /**
      * @dev See {IERC721-approve}.
      */
-    function approve(address to, uint256 tokenId) public virtual override {
+    function approve(address to, uint256 tokenId) public payable virtual override {
         address owner = ownerOf(tokenId);
-        require(to != owner, "ERC721Psi: approval to current owner");
 
-        require(
-            _msgSender() == owner || isApprovedForAll(owner, _msgSender()),
-            "ERC721Psi: approve caller is not owner nor approved for all"
-        );
+        if (_msgSenderERC721Psi() != owner) {
+            if (!isApprovedForAll(owner, _msgSenderERC721Psi())) {
+                revert ApprovalCallerNotOwnerNorApproved();
+            }
+        }
 
         _approve(to, tokenId);
     }
@@ -206,14 +200,11 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         view
         virtual
         override
-        returns (address)
+        returns (address) 
     {
-        require(
-            _exists(tokenId),
-            "ERC721Psi: approved query for nonexistent token"
-        );
+        if (!_exists(tokenId)) revert ApprovalQueryForNonexistentToken();
 
-        return _tokenApprovals[tokenId];
+        return ERC721PsiStorage.layout()._tokenApprovals[tokenId];
     }
 
     /**
@@ -224,10 +215,8 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         virtual
         override
     {
-        require(operator != _msgSender(), "ERC721Psi: approve to caller");
-
-        _operatorApprovals[_msgSender()][operator] = approved;
-        emit ApprovalForAll(_msgSender(), operator, approved);
+        ERC721PsiStorage.layout()._operatorApprovals[_msgSenderERC721Psi()][operator] = approved;
+        emit ApprovalForAll(_msgSenderERC721Psi(), operator, approved);
     }
 
     /**
@@ -240,7 +229,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         override
         returns (bool)
     {
-        return _operatorApprovals[owner][operator];
+        return ERC721PsiStorage.layout()._operatorApprovals[owner][operator];
     }
 
     /**
@@ -250,13 +239,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         address from,
         address to,
         uint256 tokenId
-    ) public virtual override {
-        //solhint-disable-next-line max-line-length
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721Psi: transfer caller is not owner nor approved"
-        );
-
+    ) public payable virtual override {
         _transfer(from, to, tokenId);
     }
 
@@ -267,7 +250,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         address from,
         address to,
         uint256 tokenId
-    ) public virtual override {
+    ) public payable virtual override {
         safeTransferFrom(from, to, tokenId, "");
     }
 
@@ -279,11 +262,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         address to,
         uint256 tokenId,
         bytes memory _data
-    ) public virtual override {
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721Psi: transfer caller is not owner nor approved"
-        );
+    ) public payable virtual override {
         _safeTransfer(from, to, tokenId, _data);
     }
 
@@ -312,10 +291,9 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         bytes memory _data
     ) internal virtual {
         _transfer(from, to, tokenId);
-        require(
-            _checkOnERC721Received(from, to, tokenId, 1,_data),
-            "ERC721Psi: transfer to non ERC721Receiver implementer"
-        );
+        if (!_checkOnERC721Received(from, to, tokenId, 1, _data)) {
+            revert TransferToNonERC721ReceiverImplementer();
+        }
     }
 
     /**
@@ -326,7 +304,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
      * Tokens start existing when they are minted (`_mint`).
      */
     function _exists(uint256 tokenId) internal view virtual returns (bool) {
-        return tokenId < _nextTokenId();
+        return tokenId < _nextTokenId() && _startTokenId() <= tokenId;
     }
 
     /**
@@ -372,12 +350,13 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         uint256 quantity,
         bytes memory _data
     ) internal virtual {
-        uint256 startTokenId = _nextTokenId();
         _mint(to, quantity);
-        require(
-            _checkOnERC721Received(address(0), to, startTokenId, quantity, _data),
-            "ERC721Psi: transfer to non ERC721Receiver implementer"
-        );
+        uint256 end = ERC721PsiStorage.layout()._currentIndex;
+        if (!_checkOnERC721Received(address(0), to, end - quantity, quantity, _data)) {
+            revert TransferToNonERC721ReceiverImplementer();
+        }
+        // Reentrancy protection.
+        if (ERC721PsiStorage.layout()._currentIndex != end) revert();
     }
 
 
@@ -387,13 +366,13 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
     ) internal virtual {
         uint256 nextTokenId = _nextTokenId();
         
-        require(quantity > 0, "ERC721Psi: quantity must be greater 0");
-        require(to != address(0), "ERC721Psi: mint to the zero address");
+        if (quantity == 0) revert MintZeroQuantity();
+        if (to == address(0)) revert MintToZeroAddress();
         
         _beforeTokenTransfers(address(0), to, nextTokenId, quantity);
-        _currentIndex += quantity;
-        _owners[nextTokenId] = to;
-        _batchHead.set(nextTokenId);
+        ERC721PsiStorage.layout()._currentIndex += quantity;
+        ERC721PsiStorage.layout()._owners[nextTokenId] = to;
+        ERC721PsiStorage.layout()._batchHead.set(nextTokenId);
 
         uint256 toMasked;
         uint256 end = nextTokenId + quantity;
@@ -448,31 +427,34 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         address to,
         uint256 tokenId
     ) internal virtual {
+
         (address owner, uint256 tokenIdBatchHead) = _ownerAndBatchHeadOf(tokenId);
 
-        require(
-            owner == from,
-            "ERC721Psi: transfer of token that is not own"
-        );
-        require(to != address(0), "ERC721Psi: transfer to the zero address");
+        if (owner != from) revert TransferFromIncorrectOwner();
+
+        if (!_isApprovedOrOwner(_msgSenderERC721Psi(), tokenId)) {
+            revert TransferCallerNotOwnerNorApproved();
+        }
+
+        if (to == address(0)) revert TransferToZeroAddress();
 
         _beforeTokenTransfers(from, to, tokenId, 1);
 
         // Clear approvals from the previous owner
         _approve(address(0), tokenId);   
 
-        uint256 nextTokenId = tokenId + 1;
+        uint256 subsequentTokenId = tokenId + 1;
 
-        if(!_batchHead.get(nextTokenId) &&  
-            nextTokenId < _nextTokenId()
+        if(!ERC721PsiStorage.layout()._batchHead.get(subsequentTokenId) &&  
+            subsequentTokenId < _nextTokenId()
         ) {
-            _owners[nextTokenId] = from;
-            _batchHead.set(nextTokenId);
+            ERC721PsiStorage.layout()._owners[subsequentTokenId] = from;
+            ERC721PsiStorage.layout()._batchHead.set(subsequentTokenId);
         }
 
-        _owners[tokenId] = to;
+        ERC721PsiStorage.layout()._owners[tokenId] = to;
         if(tokenId != tokenIdBatchHead) {
-            _batchHead.set(tokenId);
+            ERC721PsiStorage.layout()._batchHead.set(tokenId);
         }
 
         emit Transfer(from, to, tokenId);
@@ -486,7 +468,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
      * Emits a {Approval} event.
      */
     function _approve(address to, uint256 tokenId) internal virtual {
-        _tokenApprovals[tokenId] = to;
+        ERC721PsiStorage.layout()._tokenApprovals[tokenId] = to;
         emit Approval(ownerOf(tokenId), to, tokenId);
     }
 
@@ -511,11 +493,11 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         if (to.isContract()) {
             r = true;
             for(uint256 tokenId = startTokenId; tokenId < startTokenId + quantity; tokenId++){
-                try IERC721Receiver(to).onERC721Received(_msgSender(), from, tokenId, _data) returns (bytes4 retval) {
-                    r = r && retval == IERC721Receiver.onERC721Received.selector;
+                try ERC721PsiUpgradeable__IERC721Receiver(to).onERC721Received( _msgSenderERC721Psi(), from, tokenId, _data) returns (bytes4 retval) {
+                    r = r && retval == ERC721PsiUpgradeable__IERC721Receiver.onERC721Received.selector;
                 } catch (bytes memory reason) {
                     if (reason.length == 0) {
-                        revert("ERC721Psi: transfer to non ERC721Receiver implementer");
+                        revert TransferToNonERC721ReceiverImplementer();
                     } else {
                         assembly {
                             revert(add(32, reason), mload(reason))
@@ -530,10 +512,10 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
     }
 
     function _getBatchHead(uint256 tokenId) internal view returns (uint256 tokenIdBatchHead) {
-        tokenIdBatchHead = _batchHead.scanForward(tokenId); 
+        tokenIdBatchHead = ERC721PsiStorage.layout()._batchHead.scanForward(tokenId); 
     }
 
-    
+
     function totalSupply() public virtual view returns (uint256) {
         return _totalMinted();
     }
@@ -561,7 +543,6 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
             return tokenIds;   
         }
     }
-
 
     /**
      * @dev Hook that is called before a set of serially-ordered token ids are about to be transferred. This includes minting.
@@ -600,4 +581,14 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         uint256 startTokenId,
         uint256 quantity
     ) internal virtual {}
+
+
+    /**
+     * @dev Returns the message sender (defaults to `msg.sender`).
+     *
+     * If you are writing GSN compatible contracts, you need to override this function.
+     */
+    function _msgSenderERC721Psi() internal view virtual returns (address) {
+        return msg.sender;
+    }
 }

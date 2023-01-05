@@ -7,12 +7,13 @@ import "hardhat/console.sol";
 
 
 contract ERC721PsiAddressDataUpgradeableMock is ERC721PsiAddressDataUpgradeable {
-    function initialize(
-        string memory name_, 
-        string memory symbol_
-    ) initializer external {
-        __ERC721Psi_init(name_, symbol_);
+    
+    function __ERC721PsiMock_init(string memory name_, string memory symbol_) internal onlyInitializingERC721Psi {
+        __ERC721Psi_init_unchained(name_, symbol_);
+        __ERC721PsiAddressDataMock_init_unchained(name_, symbol_);
     }
+    
+    function __ERC721PsiAddressDataMock_init_unchained(string memory, string memory) internal onlyInitializingERC721Psi {}
 
     function baseURI() public view returns (string memory) {
         return _baseURI();
@@ -40,7 +41,7 @@ contract ERC721PsiAddressDataUpgradeableMock is ERC721PsiAddressDataUpgradeable 
         _getBatchHead(tokenId);
     }
 
-    function benchmarkOwnerOf(uint256 tokenId) public returns (address owner) {
+    function benchmarkOwnerOf(uint256 tokenId) public view returns (address owner) {
         uint256 gasBefore = gasleft();
         owner = ownerOf(tokenId);
         uint256 gasAfter = gasleft();

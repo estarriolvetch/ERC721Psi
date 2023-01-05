@@ -13,11 +13,11 @@ pragma solidity ^0.8.0;
 
 import "solidity-bits/contracts/BitMaps.sol";
 import "../ERC721PsiUpgradeable.sol";
-
+import {ERC721PsiBurnableStorage} from "../storage/ERC721PsiBurnableStorage.sol";
 
 abstract contract ERC721PsiBurnableUpgradeable is ERC721PsiUpgradeable {
+    using ERC721PsiBurnableStorage for ERC721PsiBurnableStorage.Layout;
     using BitMaps for BitMaps.BitMap;
-    BitMaps.BitMap private _burnedToken;
 
     /**
      * @dev Destroys `tokenId`.
@@ -32,7 +32,7 @@ abstract contract ERC721PsiBurnableUpgradeable is ERC721PsiUpgradeable {
     function _burn(uint256 tokenId) internal virtual {
         address from = ownerOf(tokenId);
         _beforeTokenTransfers(from, address(0), tokenId, 1);
-        _burnedToken.set(tokenId);
+        ERC721PsiBurnableStorage.layout()._burnedToken.set(tokenId);
         
         emit Transfer(from, address(0), tokenId);
 
@@ -48,10 +48,28 @@ abstract contract ERC721PsiBurnableUpgradeable is ERC721PsiUpgradeable {
      * and stop existing when they are burned (`_burn`).
      */
     function _exists(uint256 tokenId) internal view override virtual returns (bool){
-        if(_burnedToken.get(tokenId)) {
+        if(ERC721PsiBurnableStorage.layout()._burnedToken.get(tokenId)) {
             return false;
         } 
         return super._exists(tokenId);
+    }
+
+    /**
+     * @dev See {IERC721-ownerOf}.
+     */
+    function ownerOf(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
+        if (ERC721PsiBurnableStorage.layout()._burnedToken.get(tokenId)) {
+            return address(0);
+        }
+        else {
+            return super.ownerOf(tokenId);
+        }
     }
 
     /**
@@ -69,7 +87,7 @@ abstract contract ERC721PsiBurnableUpgradeable is ERC721PsiUpgradeable {
         uint256 lastBucket = (_nextTokenId() >> 8) + 1;
 
         for(uint256 i=startBucket; i < lastBucket; i++) {
-            uint256 bucket = _burnedToken.getBucket(i);
+            uint256 bucket = ERC721PsiBurnableStorage.layout()._burnedToken.getBucket(i);
             burned += _popcount(bucket);
         }
     }
