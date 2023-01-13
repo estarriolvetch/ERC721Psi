@@ -15,7 +15,7 @@ import "../ERC721PsiUpgradeable.sol";
 import {ERC721PsiAddressDataStorage} from "../storage/ERC721PsiAddressDataStorage.sol";
 
 abstract contract ERC721PsiAddressDataUpgradeable is ERC721PsiUpgradeable {
-    using ERC721PsiAddressDataStorage for ERC721PsiAddressDataStorage.Layout;   
+    using ERC721PsiAddressDataStorage for ERC721PsiAddressDataStorage.Layout;  
 
     /**
      * @dev See {IERC721-balanceOf}.
@@ -28,7 +28,21 @@ abstract contract ERC721PsiAddressDataUpgradeable is ERC721PsiUpgradeable {
         returns (uint) 
     {
         if (owner == address(0)) revert BalanceQueryForZeroAddress();
-        return uint256(ERC721PsiAddressDataStorage.layout()._addressData[owner].balance);   
+        return ERC721PsiAddressDataStorage.layout()._packedAddressData[owner] & (1 << 64) - 1;
+    }
+
+    /**
+     * Returns the number of tokens minted by `owner`.
+     */
+    function _numberMinted(address owner) internal view returns (uint256) {
+        return (ERC721PsiAddressDataStorage.layout()._packedAddressData[owner] >> 64) & (1 << 64) - 1;
+    }
+
+    /**
+     * Returns the number of tokens burned by or on behalf of `owner`.
+     */
+    function _numberBurned(address owner) internal view returns (uint256) {
+        return (ERC721PsiAddressDataStorage.layout()._packedAddressData[owner] >> 128) & (1 << 64) - 1;
     }
 
     /**
@@ -50,21 +64,25 @@ abstract contract ERC721PsiAddressDataUpgradeable is ERC721PsiUpgradeable {
         uint256 quantity
     ) internal override virtual {
         require(quantity < 2 ** 64);
-        uint64 _quantity = uint64(quantity);
 
-        if(from != address(0)){
-            ERC721PsiAddressDataStorage.layout()._addressData[from].balance -= _quantity;
-        } else {
-            // Mint
-            ERC721PsiAddressDataStorage.layout()._addressData[to].numberMinted += _quantity;
-        }
+        unchecked {
+            if(from != address(0)){
+                ERC721PsiAddressDataStorage.layout()._packedAddressData[from] -= quantity;
+            } 
+            else {
+                // Mint
+                ERC721PsiAddressDataStorage.layout()._packedAddressData[to] += (quantity << 64);
+            }
 
-        if(to != address(0)){
-            ERC721PsiAddressDataStorage.layout()._addressData[to].balance += _quantity;
-        } else {
-            // Burn
-            ERC721PsiAddressDataStorage.layout()._addressData[from].numberBurned += _quantity;
+            if(to != address(0)){
+                ERC721PsiAddressDataStorage.layout()._packedAddressData[to] += quantity;
+            } 
+            else {
+                // Burn
+                ERC721PsiAddressDataStorage.layout()._packedAddressData[from] += (quantity << 128);
+            }
         }
         super._afterTokenTransfers(from, to, startTokenId, quantity);
     }
+
 }

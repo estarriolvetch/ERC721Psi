@@ -41,6 +41,13 @@ contract StartTokenIdHelperUpgradeableWithInit is StartTokenIdHelperUpgradeable 
     }
 }
 
+import './ERC721PsiAddressDataUpgradeableMock.sol';
+
+contract ERC721PsiAddressDataUpgradeableMockWithInit is ERC721PsiAddressDataUpgradeableMock {
+    constructor(string memory name_, string memory symbol_) payable initializerERC721Psi {
+        __ERC721PsiAddressDataMock_init(name_, symbol_);
+    }
+}
 
 import './ERC721PsiBurnableMockUpgradeable.sol';
 
