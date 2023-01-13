@@ -87,20 +87,20 @@ abstract contract ERC721PsiAddressData is ERC721Psi {
         require(quantity < 2 ** 64);
 
         unchecked {
-            if(from != address(0)){
-                _packedAddressData[from] -= quantity;
-            } 
-            else {
-                // Mint
-                _packedAddressData[to] += (quantity << 64);
-            }
-
             if(to != address(0)){
-                _packedAddressData[to] += quantity;
+                if (from == address(0)) {
+                    // Mint
+                    _packedAddressData[to] += quantity * ((1 << 64) | 1);
+                }
+                else {
+                    //Transfer
+                    _packedAddressData[to] += quantity;
+                    _packedAddressData[from] -= quantity;
+                }
             } 
             else {
                 // Burn
-                _packedAddressData[from] += (quantity << 128);
+                _packedAddressData[from] += (quantity << 128) - quantity;
             }
         }
         super._afterTokenTransfers(from, to, startTokenId, quantity);

@@ -66,20 +66,20 @@ abstract contract ERC721PsiAddressDataUpgradeable is ERC721PsiUpgradeable {
         require(quantity < 2 ** 64);
 
         unchecked {
-            if(from != address(0)){
-                ERC721PsiAddressDataStorage.layout()._packedAddressData[from] -= quantity;
-            } 
-            else {
-                // Mint
-                ERC721PsiAddressDataStorage.layout()._packedAddressData[to] += (quantity << 64);
-            }
-
             if(to != address(0)){
-                ERC721PsiAddressDataStorage.layout()._packedAddressData[to] += quantity;
+                if (from == address(0)) {
+                    // Mint
+                    ERC721PsiAddressDataStorage.layout()._packedAddressData[to] += quantity * ((1 << 64) | 1);
+                }
+                else {
+                    //Transfer
+                    ERC721PsiAddressDataStorage.layout()._packedAddressData[to] += quantity;
+                    ERC721PsiAddressDataStorage.layout()._packedAddressData[from] -= quantity;
+                }
             } 
             else {
                 // Burn
-                ERC721PsiAddressDataStorage.layout()._packedAddressData[from] += (quantity << 128);
+                ERC721PsiAddressDataStorage.layout()._packedAddressData[from] += (quantity << 128) - quantity;
             }
         }
         super._afterTokenTransfers(from, to, startTokenId, quantity);
