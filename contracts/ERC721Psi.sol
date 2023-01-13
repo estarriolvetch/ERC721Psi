@@ -16,7 +16,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "solidity-bits/contracts/BitMaps.sol";
+import "solady/src/utils/LibBitmap.sol";
 import "./interface/IERC721Psi.sol";
 
 /**
@@ -35,16 +35,16 @@ contract ERC721Psi is IERC721Psi {
     
     using Address for address;
     using Strings for uint256;
-    using BitMaps for BitMaps.BitMap;
+    using LibBitmap for LibBitmap.Bitmap;
 
-    BitMaps.BitMap private _batchHead;
+    LibBitmap.Bitmap private _batchHead;
 
     string private _name;
     string private _symbol;
 
     // Mapping from token ID to owner address
     mapping(uint256 => address) internal _owners;
-    uint256 private _currentIndex;
+    uint256 internal _currentIndex;
 
     mapping(uint256 => address) private _tokenApprovals;
     mapping(address => mapping(address => bool)) private _operatorApprovals;
@@ -518,7 +518,7 @@ contract ERC721Psi is IERC721Psi {
     }
 
     function _getBatchHead(uint256 tokenId) internal view returns (uint256 tokenIdBatchHead) {
-        tokenIdBatchHead = _batchHead.scanForward(tokenId); 
+        tokenIdBatchHead = _batchHead.findLastSet(tokenId); 
     }
 
 

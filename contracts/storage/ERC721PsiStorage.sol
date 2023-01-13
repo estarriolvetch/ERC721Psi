@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "solidity-bits/contracts/BitMaps.sol";
+import "solady/src/utils/LibBitmap.sol";
 
 library ERC721PsiStorage {
 
@@ -20,7 +20,7 @@ library ERC721PsiStorage {
         // Mapping from owner to operator approvals
         mapping(address => mapping(address => bool)) _operatorApprovals;
         // stores batchhead
-        BitMaps.BitMap _batchHead;
+        LibBitmap.Bitmap _batchHead;
     }
 
     bytes32 internal constant STORAGE_SLOT = keccak256('ERC721Psi.contracts.storage.ERC721Psi');

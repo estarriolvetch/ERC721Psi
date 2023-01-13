@@ -19,7 +19,7 @@ import {ERC721PsiStorage} from "./storage/ERC721PsiStorage.sol";
 import "./storage/ERC721PsiInitializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
-import "solidity-bits/contracts/BitMaps.sol";
+import "solady/src/utils/LibBitmap.sol";
 
 interface ERC721PsiUpgradeable__IERC721Receiver {
     function onERC721Received(
@@ -34,7 +34,7 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
     using ERC721PsiStorage for ERC721PsiStorage.Layout;
     using AddressUpgradeable for address;
     using StringsUpgradeable for uint256;
-    using BitMaps for BitMaps.BitMap;
+    using LibBitmap for LibBitmap.Bitmap;
 
     // The mask of the lower 160 bits for addresses.
     uint256 private constant _BITMASK_ADDRESS = (1 << 160) - 1;
@@ -512,7 +512,7 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
     }
 
     function _getBatchHead(uint256 tokenId) internal view returns (uint256 tokenIdBatchHead) {
-        tokenIdBatchHead = ERC721PsiStorage.layout()._batchHead.scanForward(tokenId); 
+        tokenIdBatchHead = ERC721PsiStorage.layout()._batchHead.findLastSet(tokenId); 
     }
 
 
