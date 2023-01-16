@@ -11,12 +11,12 @@
  */
 pragma solidity ^0.8.0;
 
-import "solidity-bits/contracts/BitMaps.sol";
+import "solady/src/utils/LibBitmap.sol";
 import "../ERC721Psi.sol";
 
 abstract contract ERC721PsiBurnable is ERC721Psi {
-    using BitMaps for BitMaps.BitMap;
-    BitMaps.BitMap private _burnedToken;
+    using LibBitmap for LibBitmap.Bitmap;
+    LibBitmap.Bitmap private _burnedToken;
 
     /**
      * @dev Destroys `tokenId`.
@@ -75,29 +75,13 @@ abstract contract ERC721PsiBurnable is ERC721Psi {
      * @dev See {IERC721Enumerable-totalSupply}.
      */
     function totalSupply() public view virtual override returns (uint256) {
-        return _totalMinted() - _burned();
+        return _currentIndex - _burned() - _startTokenId();
     }
 
     /**
      * @dev Returns number of token burned.
      */
     function _burned() internal view returns (uint256 burned){
-        uint256 startBucket = _startTokenId() >> 8;
-        uint256 lastBucket = (_nextTokenId() >> 8) + 1;
-
-        for(uint256 i=startBucket; i < lastBucket; i++) {
-            uint256 bucket = _burnedToken.getBucket(i);
-            burned += _popcount(bucket);
-        }
-    }
-
-    /**
-     * @dev Returns number of set bits.
-     */
-    function _popcount(uint256 x) private pure returns (uint256 count) {
-        unchecked{
-            for (count=0; x!=0; count++)
-                x &= x - 1;
-        }
+        return _burnedToken.popCount( _startTokenId(), _totalMinted());
     }
 }

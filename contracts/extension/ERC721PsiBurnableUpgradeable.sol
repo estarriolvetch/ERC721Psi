@@ -11,13 +11,13 @@
  */
 pragma solidity ^0.8.0;
 
-import "solidity-bits/contracts/BitMaps.sol";
+import "solady/src/utils/LibBitmap.sol";
 import "../ERC721PsiUpgradeable.sol";
 import {ERC721PsiBurnableStorage} from "../storage/ERC721PsiBurnableStorage.sol";
 
 abstract contract ERC721PsiBurnableUpgradeable is ERC721PsiUpgradeable {
     using ERC721PsiBurnableStorage for ERC721PsiBurnableStorage.Layout;
-    using BitMaps for BitMaps.BitMap;
+    using LibBitmap for LibBitmap.Bitmap;
 
     /**
      * @dev Destroys `tokenId`.
@@ -76,29 +76,13 @@ abstract contract ERC721PsiBurnableUpgradeable is ERC721PsiUpgradeable {
      * @dev See {IERC721Enumerable-totalSupply}.
      */
     function totalSupply() public view virtual override returns (uint256) {
-        return _totalMinted() - _burned();
+         return _totalMinted() - _burned();
     }
 
     /**
      * @dev Returns number of token burned.
      */
     function _burned() internal view returns (uint256 burned){
-        uint256 startBucket = _startTokenId() >> 8;
-        uint256 lastBucket = (_nextTokenId() >> 8) + 1;
-
-        for(uint256 i=startBucket; i < lastBucket; i++) {
-            uint256 bucket = ERC721PsiBurnableStorage.layout()._burnedToken.getBucket(i);
-            burned += _popcount(bucket);
-        }
-    }
-
-    /**
-     * @dev Returns number of set bits.
-     */
-    function _popcount(uint256 x) private pure returns (uint256 count) {
-        unchecked{
-            for (count=0; x!=0; count++)
-                x &= x - 1;
-        }
+      return ERC721PsiBurnableStorage.layout()._burnedToken.popCount( _startTokenId(), _totalMinted());
     }
 }
