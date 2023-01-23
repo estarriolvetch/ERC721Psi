@@ -41,7 +41,7 @@ contract ERC721PsiAddressDataMock is ERC721PsiAddressData {
         returns (uint) 
     {
         if (owner == address(0)) revert BalanceQueryForZeroAddress();
-        return uint256(_addressData[owner].numberMinted);   
+        return _numberMinted(owner);   
     }
 
     function benchmarkOwnerOf(uint256 tokenId) public view returns (address owner) {

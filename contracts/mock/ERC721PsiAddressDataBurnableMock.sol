@@ -20,7 +20,7 @@ contract ERC721PsiAddressDataBurnableMock is ERC721PsiBurnable, ERC721PsiAddress
         returns (uint) 
     {
         if (owner == address(0)) revert BalanceQueryForZeroAddress();
-        return uint256(_addressData[owner].numberBurned);   
+        return _numberBurned(owner);   
     }
 
     function safeMint(address to, uint256 quantity) public {

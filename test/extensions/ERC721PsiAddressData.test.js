@@ -162,3 +162,12 @@ describe(
     constructorArgs: ['ERC721Psi', 'ERC721Psi', 1],
   })
 );
+
+describe(
+  'ERC721PsiAddressDataUpgradeable',
+  createTestSuite({
+    contract: 'ERC721PsiAddressDataUpgradeableMock',
+    constructorArgs: ['ERC721Psi', 'ERC721Psi'],
+  })
+);
+
