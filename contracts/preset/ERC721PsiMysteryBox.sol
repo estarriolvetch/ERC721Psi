@@ -117,7 +117,7 @@ abstract contract ERC721PsiMysteryBox is VRFConsumerBaseV2, ERC721Psi {
         uint256 quantity
     ) internal override virtual {
         if(from == address(0)) {
-            require(startTokenId + quantity < _maxSupply(), "Exceed maximum supply!");
+            require(startTokenId + quantity <= _maxSupply(), "Exceed maximum supply!");
         }
         super._beforeTokenTransfers(from, to, startTokenId, quantity);
     }
