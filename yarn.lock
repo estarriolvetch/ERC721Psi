@@ -4491,6 +4491,13 @@ fp-ts@^1.0.0:
   resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-1.19.5.tgz#3da865e585dfa1fdfd51785417357ac50afc520a"
   integrity sha512-wDNqTimnzs8QqpldiId9OavWK2NptormjXnRJTQecNjzwfyp6P/8s/zG8e4h3ja3oqkKaY72UlTjQYt/1yXf9A==
 
+fpe-map@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/fpe-map/-/fpe-map-0.1.1.tgz#bf1d1f2b11afc9366aa1d310e6fbd087a9f780ca"
+  integrity sha512-6Ldjye6icRIJ7yuBOIRoPHzOVugBtN9AuWidFGlBE8WhGH3H4sKEdmUyOmMw12DW0t4uAqoReQcuaCutOvfQMA==
+  dependencies:
+    solidity-bits "^0.3.2"
+
 fragment-cache@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/fragment-cache/-/fragment-cache-0.2.1.tgz#4290fad27f13e89be7f33799c6bc5a0abfff0d19"
