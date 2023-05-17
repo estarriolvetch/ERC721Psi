@@ -53,6 +53,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#considerations">Considerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#road-map">Road Map</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#contributors">Contributors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#projects-using-erc721psi">Projects using ERC721Psi</a></li>
 </ul>
 </li>
 </ul>
@@ -87,13 +88,14 @@
 <a class="reference external image-reference" href="https://github.com/estarriolvetch/ERC721Psi/actions/workflows/deploy_npm.yml"><img alt="Publish Package to npmjs" src="https://github.com/estarriolvetch/ERC721Psi/actions/workflows/deploy_npm.yml/badge.svg" /></a>
 <a class="reference external image-reference" href="https://github.com/estarriolvetch/ERC721Psi/actions/workflows/make_docs.yml"><img alt="Build Documentation" src="https://github.com/estarriolvetch/ERC721Psi/actions/workflows/make_docs.yml/badge.svg" /></a>
 <a class="reference external image-reference" href="https://www.npmjs.com/package/erc721psi"><img alt="npm version" src="https://badge.fury.io/js/erc721psi.svg" /></a>
-<p><strong>If your application doesn’t require a specific ERC721 interface, you may be interested in checking `ERC1155Delta &lt;https://erc1155delta.ctor.xyz&gt;`_ which provides even more gas saving than ERC721Psi.</strong></p>
-<p><a href="#id1"><span class="problematic" id="id2">**</span></a>ERC721Psi is releasd under MIT opensource licence and free to use. If you need commercial support/service regarding ERC721Psi, feel free to contact <a class="reference external" href="https://ctor.xyz">ctor.xyz</a>**</p>
-<p>ERC721Psi is an ERC721 compilant implementation designed for scalable and gas-efficient on-chain application with built-in randomized metadata generation. Inspired by AzukiZen’s awesome ERC721A, ERC721Psi also provides batch minting at a fixed gas cost. However, ERC721Psi manages to solve the <a class="reference external" href="https://github.com/chiru-labs/ERC721A/issues/145">scaling issue of token transfer</a> through the mathematical power of the <a class="reference external" href="https://en.wikipedia.org/wiki/De_Bruijn_sequence">de Bruijn sequence</a>.</p>
+<p>ERC721Psi is an ERC721 compliant implementation designed for scalable and gas-efficient on-chain application with built-in randomized metadata generation.</p>
+<p>Inspired by AzukiZen’s awesome ERC721A, ERC721Psi also provides batch minting at a fixed gas cost. However, ERC721Psi manages to solve the <a class="reference external" href="https://github.com/chiru-labs/ERC721A/issues/145">scaling issue of token transfer</a> through the mathematical power of the <a class="reference external" href="https://en.wikipedia.org/wiki/De_Bruijn_sequence">de Bruijn sequence</a>.</p>
+<p><strong>If your application doesn’t require a specific ERC721 interface, you may be interested in checking `ERC1155Delta &lt;https://erc1155delta.ctor.xyz&gt;`_ which provides even more gas savings than ERC721Psi.</strong></p>
+<p><a href="#id1"><span class="problematic" id="id2">**</span></a>ERC721Psi is releasd under MIT opensource licence and is free to use. If you need commercial support/service regarding ERC721Psi, feel free to contact <a class="reference external" href="https://ctor.xyz">ctor.xyz</a>**</p>
 <p>Powered by Chainlink’s VRF V2, ERC721Psi comes with an extension that can batch mint multiple tokens with tamper-proof on-chain random attributes while retaining the fixed minting gas cost.</p>
-<p>Litepaper: <a class="reference external" href="https://mirror.xyz/ctor.xyz/zy3TUWuJFSeWyMWAucTRP45o-sVToKTrtDsUIiD_m48">https://mirror.xyz/ctor.xyz/zy3TUWuJFSeWyMWAucTRP45o-sVToKTrtDsUIiD_m48</a></p>
-<p>Slides: <a class="reference external" href="https://www.slideshare.net/EstarriolVetch/erc721psi">https://www.slideshare.net/EstarriolVetch/erc721psi</a></p>
-<p>Docs: <a class="reference external" href="https://estarriolvetch.github.io/ERC721Psi/">https://estarriolvetch.github.io/ERC721Psi/</a></p>
+<p>Litepaper: <a class="reference external" href="https://mirror.xyz/ctor.xyz/zy3TUWuJFSeWyMWAucTRP45o-sVToKTrtDsUIiD_m48">mirror.xyz/ctor.xyz/zy3TUWuJFSeWyMWAucTRP45o-sVToKTrtDsUIiD_m48</a></p>
+<p>Slides: <a class="reference external" href="https://www.slideshare.net/EstarriolVetch/erc721psi">slideshare.net/EstarriolVetch/erc721psi</a></p>
+<p>Docs: <a class="reference external" href="https://estarriolvetch.github.io/ERC721Psi/">estarriolvetch.github.io/ERC721Psi/</a></p>
 <section id="installaion">
 <h2>Installaion<a class="headerlink" href="#installaion" title="Permalink to this heading"></a></h2>
 <section id="npm">
@@ -132,7 +134,8 @@
 </section>
 <section id="random-seed-extension">
 <h2>Random Seed Extension<a class="headerlink" href="#random-seed-extension" title="Permalink to this heading"></a></h2>
-<p>The random seed extensions provide an easy way for NFT projects to create on-chain randomized metata at the individual token level. The random seed extensions uses Chainlink’s VRF V2 as its source of randomness. Each token comes with its own unique seed that can be used to derived its attributes.</p>
+<p>The random seed extensions provide an easy way for NFT projects to create on-chain randomized metata at the individual token level.</p>
+<p>The random seed extensions use Chainlink’s VRF V2 as its source of randomness. Each token comes with its own unique seed that can be used to derived its attributes.</p>
 <div class="highlight-solidity notranslate"><div class="highlight"><pre><span></span>interface<span class="w"> </span>IERC721RandomSeed<span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="kt">function</span><span class="w"> </span><span class="nv">seed</span><span class="p">(</span><span class="kt">uint256</span><span class="w"> </span><span class="nv">tokenId</span><span class="p">)</span><span class="w"> </span><span class="kt">external</span><span class="w"> </span>view<span class="w"> </span><span class="kt">returns</span><span class="w"> </span><span class="p">(</span><span class="kt">uint256</span><span class="p">);</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
@@ -154,18 +157,22 @@
 <ul class="simple">
 <li><p>Implement more extensions.</p></li>
 <li><p>Add more test cases.</p></li>
-<li><p>Build an contract wizard (like <a class="reference external" href="https://wizard.openzeppelin.com/#erc721">this</a>) for generating the contract skelton.</p></li>
+<li><p>Build an contract wizard (<a class="reference external" href="https://wizard.openzeppelin.com/#erc721">like this</a>) for generating the contract skeleton.</p></li>
 </ul>
 </section>
 <section id="contributors">
 <h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this heading"></a></h2>
-<p>PRs on documentations, test cases, and any contract improvemetns are welcomed!!</p>
+<p>PRs on documentation, test cases, and contract improvements are welcome.</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/madeinfree">madeinfree</a></p></li>
-<li><p><a class="reference external" href="https://github.com/lucaventura">lucaventura</a>
-## Projects using ERC721Psi
-If your projects use ERC721Psi, we’d like know more about it!
-Feel free to DM <a class="reference external" href="https://twitter.com/0xEstarriol">0xEstarriol</a> to share your project.</p></li>
+<li><p><a class="reference external" href="https://github.com/lucaventura">lucaventura</a></p></li>
+</ul>
+</section>
+<section id="projects-using-erc721psi">
+<h2>Projects using ERC721Psi<a class="headerlink" href="#projects-using-erc721psi" title="Permalink to this heading"></a></h2>
+<p>If your project uses ERC721Psi, we’d like know more about it!</p>
+<p>Feel free to DM <a class="reference external" href="https://twitter.com/0xEstarriol">0xEstarriol</a> to share your project.</p>
+<ul class="simple">
 <li><p>Shellz Orb: <a class="reference external" href="https://opensea.io/collection/shellzorb">opensea</a></p></li>
 <li><p>Boxcat Planet: <a class="reference external" href="https://opensea.io/collection/boxcatplanet-official">opensea</a></p></li>
 <li><p>Medieval Adventurer: <a class="reference external" href="https://twitter.com/DaoMedieval">twitter</a>, <a class="reference external" href="https://opensea.io/collection/medieval-adventurer/">opensea</a></p></li>
