@@ -16,7 +16,8 @@ artifacts
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -188,3 +189,21 @@ dist
 *.vsix
 
 
+### etc...
+.env
+coverage
+coverage.json
+typechain
+
+### Hardhat files
+cache
+artifacts
+
+### Truffle
+contracts/.placeholder
+test/.placeholder
+build
+deploy_mnemonic.key
+
+### OpenZeppelin
+.openzeppelin/unknown-*.json
