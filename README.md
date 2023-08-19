@@ -51,7 +51,7 @@ contract Adventurer is ERC721Psi {
 
 ## Random Seed Extension
 
-The random seed extensions provide an easy way for NFT projects to create on-chain randomized metata at the individual token level.
+The random seed extensions provide an easy way for NFT projects to create on-chain randomized metadata at the individual token level.
 
 The random seed extensions use Chainlink's VRF V2 as its source of randomness. Each token comes with its own unique seed that can be used to derived its attributes.
 
