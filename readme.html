@@ -134,7 +134,7 @@
 </section>
 <section id="random-seed-extension">
 <h2>Random Seed Extension<a class="headerlink" href="#random-seed-extension" title="Permalink to this heading"></a></h2>
-<p>The random seed extensions provide an easy way for NFT projects to create on-chain randomized metata at the individual token level.</p>
+<p>The random seed extensions provide an easy way for NFT projects to create on-chain randomized metadata at the individual token level.</p>
 <p>The random seed extensions use Chainlink’s VRF V2 as its source of randomness. Each token comes with its own unique seed that can be used to derived its attributes.</p>
 <div class="highlight-solidity notranslate"><div class="highlight"><pre><span></span>interface<span class="w"> </span>IERC721RandomSeed<span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="kt">function</span><span class="w"> </span><span class="nv">seed</span><span class="p">(</span><span class="kt">uint256</span><span class="w"> </span><span class="nv">tokenId</span><span class="p">)</span><span class="w"> </span><span class="kt">external</span><span class="w"> </span>view<span class="w"> </span><span class="kt">returns</span><span class="w"> </span><span class="p">(</span><span class="kt">uint256</span><span class="p">);</span><span class="w"></span>
