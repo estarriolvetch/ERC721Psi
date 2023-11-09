@@ -15,7 +15,6 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
 import "solady/src/utils/LibBitmap.sol";
 import "./interface/IERC721Psi.sol";
 
@@ -33,7 +32,6 @@ interface ERC721Psi__IERC721Receiver {
 
 contract ERC721Psi is IERC721Psi {
     
-    using Address for address;
     using Strings for uint256;
     using LibBitmap for LibBitmap.Bitmap;
 
