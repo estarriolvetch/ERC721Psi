@@ -35,6 +35,8 @@ const createTestSuite = ({ contract, constructorArgs}) =>
           );
         }
         await this.ERC721Psi.deployed();
+        txAddConsumer = await this.vrfCoordinator['addConsumer(uint64,address)'](txCreateSubscription.events[0].args.subId, this.ERC721Psi.address);
+        await txAddConsumer.wait();
       });
 
       context('with minted tokens', async function () {

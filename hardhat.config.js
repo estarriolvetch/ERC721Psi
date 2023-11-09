@@ -7,6 +7,7 @@ if (process.env.REPORT_GAS) {
   require('hardhat-gas-reporter');
 }
 
+require('solidity-coverage');
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -28,7 +29,7 @@ module.exports = {
   networks: {
     hardhat:{
       blockGasLimit: 120_000_000 
-      // 4x block limit (120 million). An reasonable amount for major node operators
+      // 4x block limit (120 million). A reasonable amount for major node operators
       // eth_call limit:
       // Alchemy: 550 million
       // Infura: 10x (300 Million)
@@ -36,7 +37,7 @@ module.exports = {
   },
   solidity: {compilers: [
     {
-      version: "0.8.11",
+      version: "0.8.22",
       settings: {
         optimizer: {
           enabled: true,

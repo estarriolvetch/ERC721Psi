@@ -17,8 +17,7 @@ pragma solidity ^0.8.0;
 import "./interface/IERC721Psi.sol";
 import {ERC721PsiStorage} from "./storage/ERC721PsiStorage.sol";
 import "./storage/ERC721PsiInitializable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "solady/src/utils/LibBitmap.sol";
 
 interface ERC721PsiUpgradeable__IERC721Receiver {
@@ -32,8 +31,7 @@ interface ERC721PsiUpgradeable__IERC721Receiver {
 
 contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
     using ERC721PsiStorage for ERC721PsiStorage.Layout;
-    using AddressUpgradeable for address;
-    using StringsUpgradeable for uint256;
+    using Strings for uint256;
     using LibBitmap for LibBitmap.Bitmap;
 
     // The mask of the lower 160 bits for addresses.
@@ -490,7 +488,7 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
         uint256 quantity,
         bytes memory _data
     ) private returns (bool r) {
-        if (to.isContract()) {
+        if (to.code.length > 0) {
             r = true;
             for(uint256 tokenId = startTokenId; tokenId < startTokenId + quantity; tokenId++){
                 try ERC721PsiUpgradeable__IERC721Receiver(to).onERC721Received( _msgSenderERC721Psi(), from, tokenId, _data) returns (bytes4 retval) {

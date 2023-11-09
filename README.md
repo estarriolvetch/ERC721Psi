@@ -4,20 +4,22 @@
 [![Build Documentation](https://github.com/estarriolvetch/ERC721Psi/actions/workflows/make_docs.yml/badge.svg)](https://github.com/estarriolvetch/ERC721Psi/actions/workflows/make_docs.yml)
 [![npm version](https://badge.fury.io/js/erc721psi.svg)](https://www.npmjs.com/package/erc721psi)
 
-**If your application doesn't require a specific ERC721 interface, you may be interested in checking [ERC1155Delta](https://erc1155delta.ctor.xyz) which provides even more gas saving than ERC721Psi.**
+ERC721Psi is an ERC721 compliant implementation designed for scalable and gas-efficient on-chain application with built-in randomized metadata generation. 
 
-**ERC721Psi is releasd under MIT opensource licence and free to use. If you need commercial support/service regarding ERC721Psi, feel free to contact [ctor.xyz](https://ctor.xyz)**
+Inspired by AzukiZen's awesome ERC721A, ERC721Psi also provides batch minting at a fixed gas cost. However, ERC721Psi manages to solve the [scaling issue of token transfer](https://github.com/chiru-labs/ERC721A/issues/145) through the mathematical power of the [de Bruijn sequence](https://en.wikipedia.org/wiki/De_Bruijn_sequence).
 
+**If your application doesn't require a specific ERC721 interface, you may be interested in checking [ERC1155Delta](https://erc1155delta.ctor.xyz) which provides even more gas savings than ERC721Psi.**
 
-ERC721Psi is an ERC721 compilant implementation designed for scalable and gas-efficient on-chain application with built-in randomized metadata generation. Inspired by AzukiZen's awesome ERC721A, ERC721Psi also provides batch minting at a fixed gas cost. However, ERC721Psi manages to solve the [scaling issue of token transfer](https://github.com/chiru-labs/ERC721A/issues/145) through the mathematical power of the [de Bruijn sequence](https://en.wikipedia.org/wiki/De_Bruijn_sequence).
+**ERC721Psi is releasd under MIT opensource licence and is free to use. If you need commercial support/service regarding ERC721Psi, feel free to contact [ctor.xyz](https://ctor.xyz)**
 
 Powered by Chainlink's VRF V2, ERC721Psi comes with an extension that can batch mint multiple tokens with tamper-proof on-chain random attributes while retaining the fixed minting gas cost.
 
-Litepaper: https://mirror.xyz/ctor.xyz/zy3TUWuJFSeWyMWAucTRP45o-sVToKTrtDsUIiD_m48
+Litepaper: [mirror.xyz/ctor.xyz/zy3TUWuJFSeWyMWAucTRP45o-sVToKTrtDsUIiD_m48](https://mirror.xyz/ctor.xyz/zy3TUWuJFSeWyMWAucTRP45o-sVToKTrtDsUIiD_m48)
 
-Slides: https://www.slideshare.net/EstarriolVetch/erc721psi
+Slides: [slideshare.net/EstarriolVetch/erc721psi](https://www.slideshare.net/EstarriolVetch/erc721psi)
 
-Docs: https://estarriolvetch.github.io/ERC721Psi/
+Docs: [estarriolvetch.github.io/ERC721Psi/](https://estarriolvetch.github.io/ERC721Psi/)
+
 ## Installaion
 ### npm
 ```
@@ -48,13 +50,18 @@ contract Adventurer is ERC721Psi {
 ```
 
 ## Random Seed Extension
-The random seed extensions provide an easy way for NFT projects to create on-chain randomized metata at the individual token level. The random seed extensions uses Chainlink's VRF V2 as its source of randomness. Each token comes with its own unique seed that can be used to derived its attributes.
+
+The random seed extensions provide an easy way for NFT projects to create on-chain randomized metadata at the individual token level.
+
+The random seed extensions use Chainlink's VRF V2 as its source of randomness. Each token comes with its own unique seed that can be used to derived its attributes.
+
 ```solidity
 interface IERC721RandomSeed {
     function seed(uint256 tokenId) external view returns (uint256);
 }
 ```
-There are two types of random seed extensions with different schemes of requesting randomness. 
+There are two types of random seed extensions with different schemes of requesting randomness.
+
 - `ERC721PsiRandomSeed`: The randomness is requested during minting. There is no extra actions required for the project owner to reveal the token. The random seeds of the tokens will be revealed when the randomness request is fulfilled by the Chainlink nodes.
 - `ERC721PsiRandomSeedReveal`: The randomness is requested when the `_reveal()` function is called. This function is usually called by the project owner to reveal the tokens. Everytime `_reveal()` is called, it will reveal the random seeds of all the tokens minted since the last reveal.
 
@@ -66,15 +73,17 @@ If tracking `balanceOf` on-chain is important for your application, please use t
 ## Road Map
 - Implement more extensions.
 - Add more test cases.
-- Build an contract wizard (like [this](https://wizard.openzeppelin.com/#erc721)) for generating the contract skelton. 
+- Build an contract wizard ([like this](https://wizard.openzeppelin.com/#erc721)) for generating the contract skeleton. 
 
 ## Contributors
-PRs on documentations, test cases, and any contract improvemetns are welcomed!!
+PRs on documentations, test cases, and any contract improvements are welcomed!!
 - [nidhhoggr](https://github.com/nidhhoggr)
 - [madeinfree](https://github.com/madeinfree)
 - [lucaventura](https://github.com/lucaventura)
+
 ## Projects using ERC721Psi
-If your projects use ERC721Psi, we'd like know more about it!
+If your project uses ERC721Psi, we'd like know more about it!
+
 Feel free to DM [0xEstarriol](https://twitter.com/0xEstarriol) to share your project.
 - Shellz Orb: [opensea](https://opensea.io/collection/shellzorb)
 - Boxcat Planet: [opensea](https://opensea.io/collection/boxcatplanet-official)
