@@ -24,6 +24,8 @@ describe('ERC721PsiReveal', function () {
       txCreateSubscription.events[0].args.subId
     );
     await this.ERC721Psi.deployed();
+    txAddConsumer = await this.vrfCoordinator['addConsumer(uint64,address)'](txCreateSubscription.events[0].args.subId, this.ERC721Psi.address);
+    await txAddConsumer.wait();
   });
 
   context('with no minted tokens', async function () {
@@ -85,7 +87,7 @@ describe('ERC721PsiReveal', function () {
         });
 
         it('invalid seed before the randomness has been fulfilled', async function () {
-          // tokenId = 6 belongs to the next generation whcih its randomness hasn't bee fullfilled.
+          // tokenId = 6 belongs to the next generation whcih its randomness hasn't bee fullfilled
           await expect(this.ERC721Psi.seed('6')).to.be.revertedWith(
             "ERC721PsiRandomSeedReveal: Randomness hasn't been fullfilled"
           )

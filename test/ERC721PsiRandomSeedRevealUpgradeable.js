@@ -34,6 +34,8 @@ describe('ERC721PsiRandomSeedRevealUpgradeable', function () {
     ); 
     
     await this.ERC721Psi.deployed();
+    txAddConsumer = await this.vrfCoordinator['addConsumer(uint64,address)'](txCreateSubscription.events[0].args.subId, this.ERC721Psi.address);
+    await txAddConsumer.wait();
   });
 
   context('with no minted tokens', async function () {

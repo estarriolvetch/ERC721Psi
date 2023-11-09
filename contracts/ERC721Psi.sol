@@ -500,7 +500,7 @@ contract ERC721Psi is Context, ERC165, IERC721, IERC721Metadata {
         uint256 quantity,
         bytes memory _data
     ) private returns (bool r) {
-        if (to.isContract()) {
+        if (to.code.length > 0) {
             r = true;
             for(uint256 tokenId = startTokenId; tokenId < startTokenId + quantity; tokenId++){
                 try IERC721Receiver(to).onERC721Received(_msgSender(), from, tokenId, _data) returns (bytes4 retval) {

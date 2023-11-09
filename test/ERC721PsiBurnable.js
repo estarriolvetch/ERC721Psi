@@ -1,7 +1,6 @@
 const { expect } = require('chai');
 const { constants } = require('@openzeppelin/test-helpers');
 const { BigNumber } = require('ethers');
-const { zeroAddress } = require('ethereumjs-blockchain/node_modules/ethereumjs-util');
 const { ZERO_ADDRESS } = constants;
 
 const RECEIVER_MAGIC_VALUE = '0x150b7a02';

@@ -14,23 +14,20 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "solidity-bits/contracts/BitMaps.sol";
 
 
 contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable, 
-    ERC165Upgradeable, IERC721Upgradeable, IERC721MetadataUpgradeable {
+    ERC165Upgradeable, IERC721, IERC721Metadata {
     
-    using AddressUpgradeable for address;
-    using StringsUpgradeable for uint256;
+    using Strings for uint256;
     using BitMaps for BitMaps.BitMap;
 
     BitMaps.BitMap private _batchHead;
@@ -96,13 +93,13 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         public
         view
         virtual
-        override(ERC165Upgradeable, IERC165Upgradeable)
+        override(ERC165Upgradeable,IERC165)
         returns (bool)
     {
         return
-            interfaceId == type(IERC721Upgradeable).interfaceId ||
-            interfaceId == type(IERC721MetadataUpgradeable).interfaceId ||
-            interfaceId == type(IERC721EnumerableUpgradeable).interfaceId ||
+            interfaceId == type(IERC721).interfaceId ||
+            interfaceId == type(IERC721Metadata).interfaceId ||
+            interfaceId == type(IERC721Enumerable).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
@@ -508,7 +505,7 @@ contract ERC721PsiUpgradeable is Initializable, ContextUpgradeable,
         uint256 quantity,
         bytes memory _data
     ) private returns (bool r) {
-        if (to.isContract()) {
+        if (to.code.length > 0) {
             r = true;
             for(uint256 tokenId = startTokenId; tokenId < startTokenId + quantity; tokenId++){
                 try IERC721Receiver(to).onERC721Received(_msgSender(), from, tokenId, _data) returns (bytes4 retval) {

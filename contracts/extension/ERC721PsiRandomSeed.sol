@@ -12,7 +12,7 @@
 pragma solidity ^0.8.0;
 
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
-import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 
 import "../interface/IERC721RandomSeed.sol";
 
@@ -106,7 +106,7 @@ abstract contract ERC721PsiRandomSeed is IERC721RandomSeed, ERC721PsiBatchMetaDa
 
         unchecked {
             uint256 _batchSeed = batchSeed[tokenIdMetaDataBatchHead];
-            require(_batchSeed != 0, "ERC721PsiRandomSeed: Randomness hasn't been fullfilled.");
+            require(_batchSeed != 0, "ERC721PsiRandomSeed: Randomness hasn't been fullfilled");
             return uint256(keccak256(
                 abi.encode(_batchSeed, tokenId)
             ));
