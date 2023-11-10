@@ -12,27 +12,15 @@
     "@chainlink/contracts": "^0.8.0",
     "@openzeppelin/contracts": "^5.0.0",
     "@openzeppelin/contracts-upgradeable": "^5.0.0",
-    "ganache-cli": "^6.12.2",
-    "solidity-bits": "^0.4.0",
-    "solidity-coverage": "^0.8.5",
-    "solady": "^0.0.62"
-  },
+    "solady": "^0.0.62"  },
   "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.2.3",
-    "@nomiclabs/hardhat-truffle5": "^2.0.7",
-    "@nomiclabs/hardhat-waffle": "^2.0.6",
-    "@nomicfoundation/hardhat-chai-matchers": "^1.0.5",
-    "@nomiclabs/hardhat-web3": "^2.0.0",
-    "@openzeppelin/hardhat-upgrades": "^1.16.0",
-    "@openzeppelin/test-helpers": "^0.5.16",
-    "bignumber.js": "^9.1.2",
-    "bn.js": "^5.2.1",
-    "chai": "^4.3.10",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
+    "@nomicfoundation/hardhat-ethers": "^3.0.4",
+    "@openzeppelin/hardhat-upgrades": "^2.3.3",
     "erc721a": "^4.2.3",
-    "ethereum-waffle": "^4.0.10",
-    "ethers": "^5.5.3",
+    "ethers": "^6.8.1",
     "hardhat": "^2.19.0",
-    "hardhat-gas-reporter": "^1.0.9",
-    "npm": "^10.2.3"
+    "npm": "^10.2.3",
+    "solidity-coverage": "^0.8.5"
   }
 }

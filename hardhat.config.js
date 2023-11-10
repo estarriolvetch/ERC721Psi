@@ -1,7 +1,6 @@
-require("@nomiclabs/hardhat-waffle");
-require("@nomiclabs/hardhat-truffle5");
-require('@openzeppelin/hardhat-upgrades');
 require("@nomicfoundation/hardhat-chai-matchers");
+require("@nomicfoundation/hardhat-ethers");
+require('@openzeppelin/hardhat-upgrades');
 
 if (process.env.REPORT_GAS) {
   require('hardhat-gas-reporter');

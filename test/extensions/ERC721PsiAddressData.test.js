@@ -1,8 +1,5 @@
 const { deployContract, offsettedIndex, bigNumbersToNumbers } = require('../helpers.js');
 const { expect } = require('chai');
-const { BigNumber } = require('ethers');
-const { constants } = require('@openzeppelin/test-helpers');
-const { ZERO_ADDRESS } = constants;
 
 const createTestSuite = ({ contract, constructorArgs }) =>
   function () {
@@ -13,7 +10,7 @@ const createTestSuite = ({ contract, constructorArgs }) =>
         this.erc721PsiAddressData = await deployContract(contract, constructorArgs);
 
         this.startTokenId = this.erc721PsiAddressData.startTokenId
-          ? (await this.erc721PsiAddressData.startTokenId()).toNumber()
+          ? (Number(await this.erc721PsiAddressData.startTokenId()))
           : 0;
 
         offsetted = (...arr) => offsettedIndex(this.startTokenId, arr);
@@ -85,7 +82,7 @@ const createTestSuite = ({ contract, constructorArgs }) =>
           };
 
           this.lastTokenId = offsetted(8);
-          this.currentIndex = this.lastTokenId.add(1);
+          this.currentIndex = this.lastTokenId+1n;
 
           this.mintOrder = [this.addr1, this.addr2, this.addr3, this.addr4, owner];
 

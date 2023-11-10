@@ -1,5 +1,4 @@
 const { expect } = require('chai');
-const ether = require('@openzeppelin/test-helpers/src/ether');
 
 const createTestSuite = ({ contract, constructorArgs}) =>
   function () {
@@ -8,7 +7,7 @@ const createTestSuite = ({ contract, constructorArgs}) =>
 
         this.vrfCoordinator = await ethers.getContractFactory('VRFCoordinatorV2Mock');
         this.vrfCoordinator = await this.vrfCoordinator.deploy(0,0);
-        await this.vrfCoordinator.deployed();
+        await this.vrfCoordinator.waitForDeployment();
 
         let txCreateSubscription = await this.vrfCoordinator["createSubscription()"]();
         txCreateSubscription = await txCreateSubscription.wait();
@@ -20,8 +19,8 @@ const createTestSuite = ({ contract, constructorArgs}) =>
             {
               unsafeAllow: ["constructor", "state-variable-immutable"],
               constructorArgs: [
-                this.vrfCoordinator.address,
-                txCreateSubscription.events[0].args.subId
+              await this.vrfCoordinator.getAddress(),
+              txCreateSubscription.logs[0].args.subId
               ]
             }
           );
@@ -30,12 +29,12 @@ const createTestSuite = ({ contract, constructorArgs}) =>
           this.ERC721Psi = await ethers.getContractFactory(contract);
           this.ERC721Psi = await this.ERC721Psi.deploy(
             ...constructorArgs,
-            this.vrfCoordinator.address,
-            txCreateSubscription.events[0].args.subId
+            await this.vrfCoordinator.getAddress(),
+            txCreateSubscription.logs[0].args.subId
           );
         }
-        await this.ERC721Psi.deployed();
-        txAddConsumer = await this.vrfCoordinator['addConsumer(uint64,address)'](txCreateSubscription.events[0].args.subId, this.ERC721Psi.address);
+        await this.ERC721Psi.waitForDeployment();
+        txAddConsumer = await this.vrfCoordinator['addConsumer(uint64,address)'](txCreateSubscription.logs[0].args.subId, await this.ERC721Psi.getAddress());
         await txAddConsumer.wait();
       });
 
@@ -78,8 +77,8 @@ const createTestSuite = ({ contract, constructorArgs}) =>
                 txReveal = await txReveal.wait();
 
                 await this.vrfCoordinator["fulfillRandomWords(uint256,address)"](
-                  txReveal.events[1].args.requestId,
-                  this.ERC721Psi.address
+                  txReveal.logs[1].args.requestId,
+                  await this.ERC721Psi.getAddress()
                 );
 
                 // tokenId = 6
@@ -116,8 +115,8 @@ const createTestSuite = ({ contract, constructorArgs}) =>
               beforeEach(async function () {
 
                 await this.vrfCoordinator["fulfillRandomWords(uint256,address)"](
-                  this.txMint2.events[1].args.requestId,
-                  this.ERC721Psi.address
+                  this.txMint2.logs[1].args.requestId,
+                  await this.ERC721Psi.getAddress()
                 ); // Corrosponding tokens in the batch: 1 and 2
 
               });
