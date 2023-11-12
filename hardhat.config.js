@@ -28,7 +28,7 @@ module.exports = {
   networks: {
     hardhat:{
       blockGasLimit: 120_000_000 
-      // 4x block limit (120 million). An reasonable amount for major node operators
+      // 4x block limit (120 million). A reasonable amount for major node operators
       // eth_call limit:
       // Alchemy: 550 million
       // Infura: 10x (300 Million)
