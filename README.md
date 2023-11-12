@@ -76,7 +76,7 @@ If tracking `balanceOf` on-chain is important for your application, please use t
 - Build an contract wizard ([like this](https://wizard.openzeppelin.com/#erc721)) for generating the contract skeleton. 
 
 ## Contributors
-PRs on documentations, test cases, and any contract improvemetns are welcomed!!
+PRs on documentations, test cases, and any contract improvements are welcomed!!
 - [nidhhoggr](https://github.com/nidhhoggr)
 - [madeinfree](https://github.com/madeinfree)
 - [lucaventura](https://github.com/lucaventura)

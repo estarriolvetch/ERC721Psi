@@ -1,12 +1,11 @@
 const { ethers } = require('hardhat');
-const { BigNumber } = require('ethers');
 
 const deployContract = async function (contractName, constructorArgs) {
   let factory;
   if (contractName.includes("Upgradeable")) contractName = `${contractName}WithInit`;
   factory = await ethers.getContractFactory(contractName);
   let contract = await factory.deploy(...(constructorArgs || []));
-  await contract.deployed();
+  await contract.waitForDeployment();
   return contract;
 };
 
@@ -22,13 +21,13 @@ const mineBlockTimestamp = async function (timestamp) {
 const offsettedIndex = function (startTokenId, arr) {
   // return one item if arr length is 1
   if (arr.length === 1) {
-    return BigNumber.from(startTokenId + arr[0]);
+    return BigInt(startTokenId + arr[0]);
   }
-  return arr.map((num) => BigNumber.from(startTokenId + num));
+  return arr.map((num) => BigInt(startTokenId + num));
 };
 
 const bigNumbersToNumbers = function(bigNumbers) {
-  return bigNumbers.map(t => t.toNumber());
+  return bigNumbers.map(t => Number(t));
 }
 
 module.exports = { deployContract, getBlockTimestamp, mineBlockTimestamp, offsettedIndex, bigNumbersToNumbers };

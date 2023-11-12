@@ -13,20 +13,20 @@ async function main() {
   for(let i = 1; i < 11; i++){
     let ERC721Psi = await hre.ethers.getContractFactory("ERC721PsiBurnableMock");
     ERC721Psi = await ERC721Psi.deploy("ERC721Psi", "ERC721Psi");
-    ERC721Psi = await ERC721Psi.deployed();
+    ERC721Psi = await ERC721Psi.waitForDeployment();
     
     //console.log("ERC721Psi deployed to:", ERC721Psi.address);
 
     let ERC721A = await hre.ethers.getContractFactory("ERC721AMock");
     ERC721A = await ERC721A.deploy("ERC721A", "ERC721A");
 
-    ERC721A = await ERC721A.deployed();
+    ERC721A = await ERC721A.waitForDeployment();
 
     //console.log("ERC721A deployed to:", ERC721A.address);
 
     let ERC721Enumerable = await hre.ethers.getContractFactory("ERC721EnumerableMock");
     ERC721Enumerable = await ERC721Enumerable.deploy("ERC721Enumerable", "ERC721Enumerable");
-    ERC721Enumerable = await ERC721Enumerable.deployed();
+    ERC721Enumerable = await ERC721Enumerable.waitForDeployment();
     
     await ERC721Psi['safeMint(address,uint256)'](deployer.address, 30);
     await ERC721A['safeMint(address,uint256)'](deployer.address, 30);

@@ -9,27 +9,18 @@
     "test:gas": "REPORT_GAS=true npx hardhat test"
   },
   "dependencies": {
-    "@chainlink/contracts": "^0.4.0",
-    "@openzeppelin/contracts": "^4.4.2",
-    "@openzeppelin/contracts-upgradeable": "^4.5.1",
-    "solady": "^0.0.62"
-  },
+    "@chainlink/contracts": "^0.8.0",
+    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/contracts-upgradeable": "^5.0.0",
+    "solady": "^0.0.62"  },
   "devDependencies": {
-    "@nomicfoundation/hardhat-chai-matchers": "^1.0.5",
-    "@nomiclabs/hardhat-ethers": "^2.0.4",
-    "@nomiclabs/hardhat-truffle5": "^2.0.3",
-    "@nomiclabs/hardhat-waffle": "^2.0.1",
-    "@nomiclabs/hardhat-web3": "^2.0.0",
-    "@openzeppelin/hardhat-upgrades": "^1.16.0",
-    "@openzeppelin/test-helpers": "^0.5.15",
-    "bignumber.js": "^9.0.2",
-    "bn.js": "^5.2.0",
-    "chai": "^4.3.4",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
+    "@nomicfoundation/hardhat-ethers": "^3.0.4",
+    "@openzeppelin/hardhat-upgrades": "^2.3.3",
     "erc721a": "^4.2.3",
-    "ethereum-waffle": "^3.0.0",
-    "ethers": "^5.5.3",
-    "hardhat": "^2.9.4",
-		"hardhat-gas-reporter": "^1.0.9",
-    "npm": "^8.6.0"
+    "ethers": "^6.8.1",
+    "hardhat": "^2.19.0",
+    "npm": "^10.2.3",
+    "solidity-coverage": "^0.8.5"
   }
 }

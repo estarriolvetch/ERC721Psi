@@ -1,7 +1,6 @@
 const { deployContract, getBlockTimestamp, mineBlockTimestamp, offsettedIndex } = require('../helpers.js');
 const { expect } = require('chai');
-const { constants } = require('@openzeppelin/test-helpers');
-const { ZERO_ADDRESS } = constants;
+const ZERO_ADDRESS = ethers.ZeroAddress;
 
 const createTestSuite = ({ contract, constructorArgs }) =>
   function () {
@@ -12,7 +11,7 @@ const createTestSuite = ({ contract, constructorArgs }) =>
         this.erc721psiBurnable = await deployContract(contract, constructorArgs);
 
         this.startTokenId = this.erc721psiBurnable.startTokenId
-          ? (await this.erc721psiBurnable.startTokenId()).toNumber()
+          ? (Number(await this.erc721psiBurnable.startTokenId()))
           : 0;
 
         offsetted = (...arr) => offsettedIndex(this.startTokenId, arr);
@@ -42,7 +41,7 @@ const createTestSuite = ({ contract, constructorArgs }) =>
           for (let i = 0; i < offsetted(2); ++i) {
             await this.erc721psiBurnable.connect(this.addr1)['burn(uint256)'](offsetted(i));
             const supplyNow = await this.erc721psiBurnable.totalSupply();
-            expect(supplyNow).to.equal(supplyBefore - (i + 1));
+            expect(supplyNow).to.equal(supplyBefore - BigInt(i + 1));
           }
         });
       });
@@ -56,13 +55,13 @@ const createTestSuite = ({ contract, constructorArgs }) =>
       */
 
       it('changes totalBurned', async function () {
-        const totalBurnedBefore = (await this.erc721psiBurnable.totalBurned()).toNumber();
+        const totalBurnedBefore = (Number(await this.erc721psiBurnable.totalBurned()));
         expect(totalBurnedBefore).to.equal(1);
 
         for (let i = 0; i < offsetted(2); ++i) {
           await this.erc721psiBurnable.connect(this.addr1)['burn(uint256)'](offsetted(i));
 
-          const totalBurnedNow = (await this.erc721psiBurnable.totalBurned()).toNumber();
+          const totalBurnedNow = (Number(await this.erc721psiBurnable.totalBurned()));
           expect(totalBurnedNow).to.equal(totalBurnedBefore + (i + 1));
         }
       });
@@ -74,12 +73,12 @@ const createTestSuite = ({ contract, constructorArgs }) =>
 
       it('cannot burn a non-existing token', async function () {
         const query = this.erc721psiBurnable.connect(this.addr1)['burn(uint256)'](offsetted(this.numTestTokens));
-        await expect(query).to.be.revertedWith('OwnerQueryForNonexistentToken');
+        await expect(query).to.be.revertedWithCustomError(this.erc721psiBurnable,'OwnerQueryForNonexistentToken');
       });
 
       it('cannot burn a burned token', async function () {
         const query = this.erc721psiBurnable.connect(this.addr1)['burn(uint256)'](this.burnedTokenId);
-        await expect(query).to.be.revertedWith('OwnerQueryForNonexistentToken');
+        await expect(query).to.be.revertedWithCustomError(this.erc721psiBurnable,'OwnerQueryForNonexistentToken');
       });
 
       it('cannot burn with wrong caller or spender', async function () {
@@ -90,7 +89,7 @@ const createTestSuite = ({ contract, constructorArgs }) =>
         await this.erc721psiBurnable.connect(this.addr1).setApprovalForAll(this.spender.address, false);
 
         const query = this.erc721psiBurnable.connect(this.spender)['burn(uint256)'](tokenIdToBurn);
-        await expect(query).to.be.revertedWith('TransferCallerNotOwnerNorApproved');
+        await expect(query).to.be.revertedWithCustomError(this.erc721psiBurnable,'TransferCallerNotOwnerNorApproved');
       });
 
       it('spender can burn with specific approved tokenId', async function () {
@@ -165,7 +164,7 @@ const createTestSuite = ({ contract, constructorArgs }) =>
         it('with first token burned', async function () {
           await this.erc721psiBurnable.connect(this.addr1)['burn(uint256)'](offsetted(0));
           for (let i = offsetted(0); i < offsetted(this.numTestTokens); ++i) {
-            if (i == offsetted(0).toNumber() || i == this.burnedTokenId) {
+            if (Number(i == offsetted(0)) || i == this.burnedTokenId) {
               expect(await this.erc721psiBurnable.ownerOf(i)).to.be.equal(ZERO_ADDRESS);
             } else {
               expect(await this.erc721psiBurnable.ownerOf(i)).to.be.equal(this.addr1.address);

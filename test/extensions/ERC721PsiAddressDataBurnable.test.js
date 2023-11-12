@@ -1,8 +1,6 @@
 const { deployContract, offsettedIndex, bigNumbersToNumbers } = require('../helpers.js');
 const { expect } = require('chai');
-const { BigNumber } = require('ethers');
-const { constants } = require('@openzeppelin/test-helpers');
-const { ZERO_ADDRESS } = constants;
+const ZERO_ADDRESS = ethers.ZeroAddress;
 
 const createTestSuite = ({ contract, constructorArgs }) =>
   function () {
@@ -13,7 +11,7 @@ const createTestSuite = ({ contract, constructorArgs }) =>
         this.erc721PsiAddressDataBurnable = await deployContract(contract, constructorArgs);
 
         this.startTokenId = this.erc721PsiAddressDataBurnable.startTokenId
-          ? (await this.erc721PsiAddressDataBurnable.startTokenId()).toNumber()
+          ? Number((await this.erc721PsiAddressDataBurnable.startTokenId()))
           : 0;
 
         offsetted = (...arr) => offsettedIndex(this.startTokenId, arr);
@@ -85,7 +83,7 @@ const createTestSuite = ({ contract, constructorArgs }) =>
           };
 
           this.lastTokenId = offsetted(8);
-          this.currentIndex = this.lastTokenId.add(1);
+          this.currentIndex = this.lastTokenId+1n;
 
           this.mintOrder = [this.addr1, this.addr2, this.addr3, this.addr4, owner];
 
@@ -149,7 +147,7 @@ const createTestSuite = ({ contract, constructorArgs }) =>
             const tokenId = this.owner.expected.tokens[0];
             await this.erc721PsiAddressDataBurnable.burn(tokenId);
             expect(await this.erc721PsiAddressDataBurnable.ownerOf(tokenId)).to.equal(ZERO_ADDRESS);
-            expect(await this.erc721PsiAddressDataBurnable.numberBurned(this.owner.address)).to.equals(BigNumber.from(1));
+            expect(await this.erc721PsiAddressDataBurnable.numberBurned(this.owner.address)).to.equals(1n);
           });
 
           it('after a token transfer', async function () {

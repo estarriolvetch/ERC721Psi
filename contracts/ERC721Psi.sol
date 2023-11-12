@@ -15,7 +15,6 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
 import "solady/src/utils/LibBitmap.sol";
 import "./interface/IERC721Psi.sol";
 
@@ -33,7 +32,6 @@ interface ERC721Psi__IERC721Receiver {
 
 contract ERC721Psi is IERC721Psi {
     
-    using Address for address;
     using Strings for uint256;
     using LibBitmap for LibBitmap.Bitmap;
 
@@ -496,7 +494,7 @@ contract ERC721Psi is IERC721Psi {
         uint256 quantity,
         bytes memory _data
     ) private returns (bool r) {
-        if (to.isContract()) {
+        if (to.code.length > 0) {
             r = true;
             for(uint256 tokenId = startTokenId; tokenId < startTokenId + quantity; tokenId++){
                 try ERC721Psi__IERC721Receiver(to).onERC721Received( _msgSenderERC721Psi(), from, tokenId, _data) returns (bytes4 retval) {

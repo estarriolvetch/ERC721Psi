@@ -1,12 +1,12 @@
-require("@nomiclabs/hardhat-waffle");
-require("@nomiclabs/hardhat-truffle5");
-require('@openzeppelin/hardhat-upgrades');
 require("@nomicfoundation/hardhat-chai-matchers");
+require("@nomicfoundation/hardhat-ethers");
+require('@openzeppelin/hardhat-upgrades');
 
 if (process.env.REPORT_GAS) {
   require('hardhat-gas-reporter');
 }
 
+require('solidity-coverage');
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -36,7 +36,7 @@ module.exports = {
   },
   solidity: {compilers: [
     {
-      version: "0.8.11",
+      version: "0.8.22",
       settings: {
         optimizer: {
           enabled: true,
