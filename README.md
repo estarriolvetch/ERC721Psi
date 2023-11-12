@@ -78,6 +78,7 @@ If tracking `balanceOf` on-chain is important for your application, please use t
 ## Contributors
 PRs on documentations, test cases, and any contract improvements are welcomed!!
 - [nidhhoggr](https://github.com/nidhhoggr)
+- [niccolopetti](https://github.com/niccolopetti)
 - [madeinfree](https://github.com/madeinfree)
 - [lucaventura](https://github.com/lucaventura)
 
