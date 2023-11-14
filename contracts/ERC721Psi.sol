@@ -116,7 +116,7 @@ contract ERC721Psi is IERC721Psi {
         returns (uint) 
     {
         if(owner == address(0)) revert BalanceQueryForZeroAddress();
-
+        //slither-disable-next-line uninitialized-local
         uint count;
         for( uint i = _startTokenId(); i < _nextTokenId(); ++i ){
             if(_exists(i)){
@@ -534,6 +534,7 @@ contract ERC721Psi is IERC721Psi {
      */
     function tokensOfOwner(address owner) external view virtual returns (uint256[] memory) {
         unchecked {
+            //slither-disable-next-line uninitialized-local
             uint256 tokenIdsIdx;
             uint256 tokenIdsLength = balanceOf(owner);
             uint256[] memory tokenIds = new uint256[](tokenIdsLength);
