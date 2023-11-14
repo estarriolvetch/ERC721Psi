@@ -31,9 +31,9 @@ contract ERC721AMock is ERC721A {
     function safeMint(
         address to,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) public {
-        _safeMint(to, quantity, _data);
+        _safeMint(to, quantity, data);
     }
 
     function benchmarkOwnerOf(uint256 tokenId) public returns (address owner) {

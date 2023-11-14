@@ -24,9 +24,9 @@ contract ERC721EnumerableMock is ERC721Enumerable {
     function safeMint(
         address to,
         uint256 tokenId,
-        bytes memory _data
+        bytes memory data
     ) public {
-        _safeMint(to, tokenId, _data);
+        _safeMint(to, tokenId, data);
     }
 
 

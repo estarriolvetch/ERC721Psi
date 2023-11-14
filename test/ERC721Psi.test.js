@@ -529,7 +529,7 @@ const createTestSuite = ({ contract, constructorArgs, initializer}) =>
                 testSuccessfulMint(true, 5);
               });
 
-              it('validates ERC721Received with custom _data', async function () {
+              it('validates ERC721Received with custom data', async function () {
                 const customData = ethers.encodeBytes32String('custom data');
                 const tx = await this.erc721psi['safeMint(address,uint256,bytes)'](await this.receiver.getAddress(), 1, customData);
                 await expect(tx)

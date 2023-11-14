@@ -55,7 +55,7 @@ abstract contract ERC721PsiRandomSeed is IERC721RandomSeed, ERC721PsiBatchMetaDa
     function _safeMint(
         address to,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) internal virtual override {
         uint256 nextTokenId = _nextTokenId();
 
@@ -69,7 +69,7 @@ abstract contract ERC721PsiRandomSeed is IERC721RandomSeed, ERC721PsiBatchMetaDa
 
         emit RandomnessRequest(requestId);
         requestIdToTokenId[requestId] = nextTokenId;
-        super._safeMint(to, quantity, _data);
+        super._safeMint(to, quantity, data);
         _processRandomnessRequest(requestId, nextTokenId);
     }
 

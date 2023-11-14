@@ -259,16 +259,16 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
         address from,
         address to,
         uint256 tokenId,
-        bytes memory _data
+        bytes memory data
     ) public payable virtual override {
-        _safeTransfer(from, to, tokenId, _data);
+        _safeTransfer(from, to, tokenId, data);
     }
 
     /**
      * @dev Safely transfers `tokenId` token from `from` to `to`, checking first that contract recipients
      * are aware of the ERC721 protocol to prevent tokens from being forever locked.
      *
-     * `_data` is additional data, it has no specified format and it is sent in call to `to`.
+     * `data` is additional data, it has no specified format and it is sent in call to `to`.
      *
      * This internal function is equivalent to {safeTransferFrom}, and can be used to e.g.
      * implement alternative mechanisms to perform token transfer, such as signature-based.
@@ -286,10 +286,10 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
         address from,
         address to,
         uint256 tokenId,
-        bytes memory _data
+        bytes memory data
     ) internal virtual {
         _transfer(from, to, tokenId);
-        if (!_checkOnERC721Received(from, to, tokenId, 1, _data)) {
+        if (!_checkOnERC721Received(from, to, tokenId, 1, data)) {
             revert TransferToNonERC721ReceiverImplementer();
         }
     }
@@ -346,11 +346,11 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
     function _safeMint(
         address to,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) internal virtual {
         _mint(to, quantity);
         uint256 end = ERC721PsiStorage.layout()._currentIndex;
-        if (!_checkOnERC721Received(address(0), to, end - quantity, quantity, _data)) {
+        if (!_checkOnERC721Received(address(0), to, end - quantity, quantity, data)) {
             revert TransferToNonERC721ReceiverImplementer();
         }
         // Reentrancy protection.
@@ -478,7 +478,7 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
      * @param to target address that will receive the tokens
      * @param startTokenId uint256 the first ID of the tokens to be transferred
      * @param quantity uint256 amount of the tokens to be transfered.
-     * @param _data bytes optional data to send along with the call
+     * @param data bytes optional data to send along with the call
      * @return r bool whether the call correctly returned the expected magic value
      */
     function _checkOnERC721Received(
@@ -486,12 +486,12 @@ contract ERC721PsiUpgradeable is ERC721PsiInitializable, IERC721Psi {
         address to,
         uint256 startTokenId,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) private returns (bool r) {
         if (to.code.length > 0) {
             r = true;
             for(uint256 tokenId = startTokenId; tokenId < startTokenId + quantity; tokenId++){
-                try ERC721PsiUpgradeable__IERC721Receiver(to).onERC721Received( _msgSenderERC721Psi(), from, tokenId, _data) returns (bytes4 retval) {
+                try ERC721PsiUpgradeable__IERC721Receiver(to).onERC721Received( _msgSenderERC721Psi(), from, tokenId, data) returns (bytes4 retval) {
                     r = r && retval == ERC721PsiUpgradeable__IERC721Receiver.onERC721Received.selector;
                 } catch (bytes memory reason) {
                     if (reason.length == 0) {

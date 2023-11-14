@@ -53,7 +53,7 @@ abstract contract ERC721PsiRandomSeedUpgradeable is IERC721RandomSeed, ERC721Psi
     function _safeMint(
         address to,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) internal virtual override {
         uint256 nextTokenId = _nextTokenId();
 
@@ -67,7 +67,7 @@ abstract contract ERC721PsiRandomSeedUpgradeable is IERC721RandomSeed, ERC721Psi
 
         emit RandomnessRequest(requestId);
         ERC721PsiRandomSeedStorage.layout().requestIdToTokenId[requestId] = nextTokenId;
-        super._safeMint(to, quantity, _data);
+        super._safeMint(to, quantity, data);
         _processRandomnessRequest(requestId, nextTokenId);
     }
 

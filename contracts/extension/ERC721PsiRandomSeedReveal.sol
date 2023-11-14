@@ -64,11 +64,11 @@ abstract contract ERC721PsiRandomSeedReveal is IERC721RandomSeed, ERC721PsiBatch
     function _safeMint(
         address to,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) internal virtual override {
         uint256 nextTokenId = _nextTokenId();
         _batchHeadtokenGen[nextTokenId] = currentGen;
-        super._safeMint(to, quantity, _data);
+        super._safeMint(to, quantity, data);
     }
 
     /**
