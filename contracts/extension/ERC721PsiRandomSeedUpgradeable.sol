@@ -25,7 +25,7 @@ abstract contract ERC721PsiRandomSeedUpgradeable is IERC721RandomSeed, ERC721Psi
     VRFCoordinatorV2Interface immutable COORDINATOR;
     uint32 immutable callbackGasLimit;
     uint16 immutable requestConfirmations;
-    uint16 constant numWords = 1;
+    uint16 constant NUM_WORDS = 1;
 
     event RandomnessRequest(uint256 requestId);
     
@@ -62,7 +62,7 @@ abstract contract ERC721PsiRandomSeedUpgradeable is IERC721RandomSeed, ERC721Psi
             _subscriptionId(),
             requestConfirmations,
             callbackGasLimit,
-            numWords
+            NUM_WORDS
         );
 
         emit RandomnessRequest(requestId);

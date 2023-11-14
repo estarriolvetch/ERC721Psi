@@ -22,7 +22,7 @@ abstract contract ERC721PsiRandomSeed is IERC721RandomSeed, ERC721PsiBatchMetaDa
     VRFCoordinatorV2Interface immutable COORDINATOR;
     uint32 immutable callbackGasLimit;
     uint16 immutable requestConfirmations;
-    uint16 constant numWords = 1;
+    uint16 constant NUM_WORDS = 1;
     
     mapping(uint256 => uint256) private requestIdToTokenId;
     mapping(uint256 => uint256) private batchSeed;
@@ -64,7 +64,7 @@ abstract contract ERC721PsiRandomSeed is IERC721RandomSeed, ERC721PsiBatchMetaDa
             _subscriptionId(),
             requestConfirmations,
             callbackGasLimit,
-            numWords
+            NUM_WORDS
         );
 
         emit RandomnessRequest(requestId);
