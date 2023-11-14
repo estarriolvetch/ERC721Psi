@@ -12,7 +12,7 @@
                                           
  */
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 import "./interface/IERC721Psi.sol";
 import {ERC721PsiStorage} from "./storage/ERC721PsiStorage.sol";
