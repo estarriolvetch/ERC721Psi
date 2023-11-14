@@ -19,6 +19,7 @@ import "./ERC721PsiBatchMetaData.sol";
 
 abstract contract ERC721PsiRandomSeed is IERC721RandomSeed, ERC721PsiBatchMetaData, VRFConsumerBaseV2 {
     // Chainklink VRF V2
+    ///@custom:security non-reentrant
     VRFCoordinatorV2Interface immutable COORDINATOR;
     uint32 immutable callbackGasLimit;
     uint16 immutable requestConfirmations;

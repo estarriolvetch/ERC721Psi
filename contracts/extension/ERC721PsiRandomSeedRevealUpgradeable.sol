@@ -22,6 +22,7 @@ abstract contract ERC721PsiRandomSeedRevealUpgradeable is IERC721RandomSeed, ERC
     using ERC721PsiRandomSeedRevealStorage for ERC721PsiRandomSeedRevealStorage.Layout;
     
     // Chainklink VRF V2
+    ///@custom:security non-reentrant
     VRFCoordinatorV2Interface immutable COORDINATOR;
     uint32 immutable callbackGasLimit;
     uint16 immutable requestConfirmations;
