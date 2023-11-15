@@ -31,7 +31,7 @@ yarn add --dev erc721psi
 ```
 ## Usage
 ```solidity
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 import "erc721psi/contracts/ERC721Psi.sol";
 

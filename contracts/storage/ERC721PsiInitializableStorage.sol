@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 /**
  * @dev This is a base storage for the initialization function for upgradeable diamond facet contracts

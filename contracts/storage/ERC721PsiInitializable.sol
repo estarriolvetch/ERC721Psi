@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 import {ERC721PsiInitializableStorage} from "./ERC721PsiInitializableStorage.sol";
 
@@ -10,7 +10,7 @@ import {ERC721PsiInitializableStorage} from "./ERC721PsiInitializableStorage.sol
  * function so it can only be called once. The {initializer} modifier provided by this contract will have this effect.
  *
  * TIP: To avoid leaving the proxy in an uninitialized state, the initializer function should be called as early as
- * possible by providing the encoded function call as the `_data` argument to {ERC1967Proxy-constructor}.
+ * possible by providing the encoded function call as the `data` argument to {ERC1967Proxy-constructor}.
  *
  * CAUTION: When used with inheritance, manual care must be taken to not invoke a parent initializer twice, or to ensure
  * that all initializers are idempotent. This is not verified automatically as constructors are by Solidity.

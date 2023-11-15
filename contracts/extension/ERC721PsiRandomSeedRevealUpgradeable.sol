@@ -9,7 +9,7 @@
                                               
                                             
  */
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
@@ -22,10 +22,11 @@ abstract contract ERC721PsiRandomSeedRevealUpgradeable is IERC721RandomSeed, ERC
     using ERC721PsiRandomSeedRevealStorage for ERC721PsiRandomSeedRevealStorage.Layout;
     
     // Chainklink VRF V2
+    ///@custom:security non-reentrant
     VRFCoordinatorV2Interface immutable COORDINATOR;
     uint32 immutable callbackGasLimit;
     uint16 immutable requestConfirmations;
-    uint16 constant numWords = 1;
+    uint16 constant NUM_WORDS = 1;
     
     event RandomnessRequest(uint256 requestId);
 
@@ -55,11 +56,11 @@ abstract contract ERC721PsiRandomSeedRevealUpgradeable is IERC721RandomSeed, ERC
     function _safeMint(
         address to,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) internal virtual override {
         uint256 nextTokenId = _nextTokenId();
         ERC721PsiRandomSeedRevealStorage.layout()._batchHeadtokenGen[nextTokenId] = ERC721PsiRandomSeedRevealStorage.layout().currentGen;
-        super._safeMint(to, quantity, _data);
+        super._safeMint(to, quantity, data);
     }
 
 
@@ -80,7 +81,7 @@ abstract contract ERC721PsiRandomSeedRevealUpgradeable is IERC721RandomSeed, ERC
             _subscriptionId(),
             requestConfirmations,
             callbackGasLimit,
-            numWords
+            NUM_WORDS
         );
 
         emit RandomnessRequest(requestId);

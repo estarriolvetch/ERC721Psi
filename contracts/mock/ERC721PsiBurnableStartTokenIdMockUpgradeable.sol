@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 import './ERC721PsiBurnableMockUpgradeable.sol';
 import './StartTokenIdHelperUpgradeable.sol';
