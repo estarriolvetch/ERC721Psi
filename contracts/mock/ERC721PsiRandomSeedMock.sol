@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 import '../extension/ERC721PsiRandomSeed.sol';
 import "hardhat/console.sol";
@@ -41,9 +41,9 @@ contract ERC721PsiRandomSeedMock is ERC721PsiRandomSeed {
     function safeMint(
         address to,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) public {
-        _safeMint(to, quantity, _data);
+        _safeMint(to, quantity, data);
     }
 
     function getBatchHead(
@@ -64,6 +64,4 @@ contract ERC721PsiRandomSeedMock is ERC721PsiRandomSeed {
         uint256 gasAfter = gasleft();
         console.log(gasBefore - gasAfter);
     }
-
-    
 }

@@ -4,7 +4,6 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
-const { BigNumber } = require("ethers");
 
 async function main() {
   const accounts = await hre.ethers.getSigners();
@@ -13,9 +12,9 @@ async function main() {
 
   const BitScan = await ethers.getContractFactory("BitScanMock");
   let bitscan = await BitScan.deploy();
-  await bitscan.deployed();
+  await bitscan.waitForDeployment();
 
-  const ONE = BigNumber.from("1");
+  const ONE = 1n;
 
   for(let i = 0; i < 255; i++){
     console.log(i);

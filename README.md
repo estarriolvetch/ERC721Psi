@@ -31,7 +31,7 @@ yarn add --dev erc721psi
 ```
 ## Usage
 ```solidity
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 import "erc721psi/contracts/ERC721Psi.sol";
 
@@ -76,7 +76,9 @@ If tracking `balanceOf` on-chain is important for your application, please use t
 - Build an contract wizard ([like this](https://wizard.openzeppelin.com/#erc721)) for generating the contract skeleton. 
 
 ## Contributors
-PRs on documentation, test cases, and contract improvements are welcome.
+PRs on documentations, test cases, and any contract improvements are welcomed!!
+- [nidhhoggr](https://github.com/nidhhoggr)
+- [niccolopetti](https://github.com/niccolopetti)
 - [madeinfree](https://github.com/madeinfree)
 - [lucaventura](https://github.com/lucaventura)
 

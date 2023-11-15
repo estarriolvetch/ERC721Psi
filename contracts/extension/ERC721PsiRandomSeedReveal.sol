@@ -9,22 +9,21 @@
                                               
                                             
  */
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
-import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 
 import "../interface/IERC721RandomSeed.sol";
-
 import "./ERC721PsiBatchMetaData.sol";
-
 
 abstract contract ERC721PsiRandomSeedReveal is IERC721RandomSeed, ERC721PsiBatchMetaData, VRFConsumerBaseV2 {
     // Chainklink VRF V2
+    ///@custom:security non-reentrant
     VRFCoordinatorV2Interface immutable COORDINATOR;
     uint32 immutable callbackGasLimit;
     uint16 immutable requestConfirmations;
-    uint16 constant numWords = 1;
+    uint16 constant NUM_WORDS = 1;
     
     // requestId => genId
     mapping(uint256 => uint256) private requestIdToGenId;
@@ -39,6 +38,8 @@ abstract contract ERC721PsiRandomSeedReveal is IERC721RandomSeed, ERC721PsiBatch
     uint256 private currentGen;
 
     event RandomnessRequest(uint256 requestId);
+
+    error GenerationQueryForNonExistentToken();
     
     constructor(
         address coordinator,
@@ -64,18 +65,18 @@ abstract contract ERC721PsiRandomSeedReveal is IERC721RandomSeed, ERC721PsiBatch
     function _safeMint(
         address to,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) internal virtual override {
         uint256 nextTokenId = _nextTokenId();
         _batchHeadtokenGen[nextTokenId] = currentGen;
-        super._safeMint(to, quantity, _data);
+        super._safeMint(to, quantity, data);
     }
 
     /**
         @dev Query the generation of `tokenId`.
      */
     function _tokenGen(uint256 tokenId) internal view returns (uint256) {
-        require(_exists(tokenId), "ERC721PsiRandomSeedReveal: generation query for nonexistent token");
+         if(!_exists(tokenId)) revert GenerationQueryForNonExistentToken();
         return _batchHeadtokenGen[_getMetaDataBatchHead(tokenId)];
     } 
 
@@ -88,7 +89,7 @@ abstract contract ERC721PsiRandomSeedReveal is IERC721RandomSeed, ERC721PsiBatch
             _subscriptionId(),
             requestConfirmations,
             callbackGasLimit,
-            numWords
+            NUM_WORDS
         );
 
         emit RandomnessRequest(requestId);
@@ -103,11 +104,11 @@ abstract contract ERC721PsiRandomSeedReveal is IERC721RandomSeed, ERC721PsiBatch
         Revert when the randomness hasn't been fulfilled.
      */
     function seed(uint256 tokenId) public virtual override view returns (uint256){
-        require(_exists(tokenId), "ERC721PsiRandomSeedReveal: seed query for nonexistent token");
+        if (!_exists(tokenId)) revert SeedQueryForNonExistentToken();
         
         unchecked {
             uint256 _genSeed = genSeed[_tokenGen(tokenId)];
-            require(_genSeed != 0, "ERC721PsiRandomSeedReveal: Randomness hasn't been fullfilled");
+            if(_genSeed == 0) revert RandomnessHasntBeenFulfilled();
             return uint256(keccak256(
                 abi.encode(_genSeed, tokenId)
             ));

@@ -10,10 +10,6 @@ contract ERC721EnumerableMock is ERC721Enumerable {
         return _baseURI();
     }
 
-    function exists(uint256 tokenId) public view returns (bool) {
-        return _exists(tokenId);
-    }
-
     function safeMint(address to, uint256 tokenId) public {
         _safeMint(to, tokenId);
     }
@@ -28,9 +24,9 @@ contract ERC721EnumerableMock is ERC721Enumerable {
     function safeMint(
         address to,
         uint256 tokenId,
-        bytes memory _data
+        bytes memory data
     ) public {
-        _safeMint(to, tokenId, _data);
+        _safeMint(to, tokenId, data);
     }
 
 

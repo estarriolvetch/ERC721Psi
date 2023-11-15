@@ -9,15 +9,15 @@
                                               
                                             
  */
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
-import "solidity-bits/contracts/BitMaps.sol";
+import "solady/src/utils/LibBitmap.sol";
 import "../ERC721PsiUpgradeable.sol";
-
+import {ERC721PsiBurnableStorage} from "../storage/ERC721PsiBurnableStorage.sol";
 
 abstract contract ERC721PsiBurnableUpgradeable is ERC721PsiUpgradeable {
-    using BitMaps for BitMaps.BitMap;
-    BitMaps.BitMap private _burnedToken;
+    using ERC721PsiBurnableStorage for ERC721PsiBurnableStorage.Layout;
+    using LibBitmap for LibBitmap.Bitmap;
 
     /**
      * @dev Destroys `tokenId`.
@@ -32,7 +32,7 @@ abstract contract ERC721PsiBurnableUpgradeable is ERC721PsiUpgradeable {
     function _burn(uint256 tokenId) internal virtual {
         address from = ownerOf(tokenId);
         _beforeTokenTransfers(from, address(0), tokenId, 1);
-        _burnedToken.set(tokenId);
+        ERC721PsiBurnableStorage.layout()._burnedToken.set(tokenId);
         
         emit Transfer(from, address(0), tokenId);
 
@@ -48,39 +48,41 @@ abstract contract ERC721PsiBurnableUpgradeable is ERC721PsiUpgradeable {
      * and stop existing when they are burned (`_burn`).
      */
     function _exists(uint256 tokenId) internal view override virtual returns (bool){
-        if(_burnedToken.get(tokenId)) {
+        if(ERC721PsiBurnableStorage.layout()._burnedToken.get(tokenId)) {
             return false;
         } 
         return super._exists(tokenId);
     }
 
     /**
+     * @dev See {IERC721-ownerOf}.
+     */
+    function ownerOf(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
+        if (ERC721PsiBurnableStorage.layout()._burnedToken.get(tokenId)) {
+            return address(0);
+        }
+        else {
+            return super.ownerOf(tokenId);
+        }
+    }
+
+    /**
      * @dev See {IERC721Enumerable-totalSupply}.
      */
     function totalSupply() public view virtual override returns (uint256) {
-        return _totalMinted() - _burned();
+         return _totalMinted() - _burned();
     }
 
     /**
      * @dev Returns number of token burned.
      */
     function _burned() internal view returns (uint256 burned){
-        uint256 startBucket = _startTokenId() >> 8;
-        uint256 lastBucket = (_nextTokenId() >> 8) + 1;
-
-        for(uint256 i=startBucket; i < lastBucket; i++) {
-            uint256 bucket = _burnedToken.getBucket(i);
-            burned += _popcount(bucket);
-        }
-    }
-
-    /**
-     * @dev Returns number of set bits.
-     */
-    function _popcount(uint256 x) private pure returns (uint256 count) {
-        unchecked{
-            for (count=0; x!=0; count++)
-                x &= x - 1;
-        }
+      return ERC721PsiBurnableStorage.layout()._burnedToken.popCount( _startTokenId(), _totalMinted());
     }
 }

@@ -9,34 +9,34 @@
                                               
                                             
  */
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
-import "solidity-bits/contracts/BitMaps.sol";
 import "../ERC721Psi.sol";
-
 
 /**
     @dev This extension follows the AddressData format of ERC721A, so
     it can be a dropped-in replacement for the contract that requires AddressData
 */ 
 abstract contract ERC721PsiAddressData is ERC721Psi {
-    // Mapping owner address to address data
-    mapping(address => AddressData) _addressData;
 
-    // Compiler will pack this into a single 256bit word.
-    struct AddressData {
-        // Realistically, 2**64-1 is more than enough.
-        uint64 balance;
-        // Keeps track of mint count with minimal overhead for tokenomics.
-        uint64 numberMinted;
-        // Keeps track of burn count with minimal overhead for tokenomics.
-        uint64 numberBurned;
-        // For miscellaneous variable(s) pertaining to the address
-        // (e.g. number of whitelist mint slots used).
-        // If there are multiple variables, please pack them into a uint64.
-        uint64 aux;
-    }
-
+    // Mapping owner address to address data.
+    //
+    // Bits Layout:
+    //
+    // Realistically, 2**64-1 is more than enough.
+    // - [0..63]    `balance`
+    //
+    // Keeps track of mint count with minimal overhead for tokenomics.
+    // - [64..127]  `numberMinted`
+    //
+    // Keeps track of burn count with minimal overhead for tokenomics.
+    // - [128..191] `numberBurned`
+    //
+    // For miscellaneous variable(s) pertaining to the address
+    // (e.g. number of whitelist mint slots used).
+    // If there are multiple variables, please pack them into a uint64.
+    // - [192..255] `aux`
+    mapping(address => uint256) private _packedAddressData;
 
     /**
      * @dev See {IERC721-balanceOf}.
@@ -48,8 +48,22 @@ abstract contract ERC721PsiAddressData is ERC721Psi {
         override 
         returns (uint) 
     {
-        require(owner != address(0), "ERC721Psi: balance query for the zero address");
-        return uint256(_addressData[owner].balance);   
+        if (owner == address(0)) revert BalanceQueryForZeroAddress();
+        return _packedAddressData[owner] & (1 << 64) - 1;
+    }
+
+    /**
+     * Returns the number of tokens minted by `owner`.
+     */
+    function _numberMinted(address owner) internal view returns (uint256) {
+        return (_packedAddressData[owner] >> 64) & (1 << 64) - 1;
+    }
+
+    /**
+     * Returns the number of tokens burned by or on behalf of `owner`.
+     */
+    function _numberBurned(address owner) internal view returns (uint256) {
+        return (_packedAddressData[owner] >> 128) & (1 << 64) - 1;
     }
 
     /**
@@ -71,20 +85,23 @@ abstract contract ERC721PsiAddressData is ERC721Psi {
         uint256 quantity
     ) internal override virtual {
         require(quantity < 2 ** 64);
-        uint64 _quantity = uint64(quantity);
 
-        if(from != address(0)){
-            _addressData[from].balance -= _quantity;
-        } else {
-            // Mint
-            _addressData[to].numberMinted += _quantity;
-        }
-
-        if(to != address(0)){
-            _addressData[to].balance += _quantity;
-        } else {
-            // Burn
-            _addressData[from].numberBurned += _quantity;
+        unchecked {
+            if(to != address(0)){
+                if (from == address(0)) {
+                    // Mint
+                    _packedAddressData[to] += quantity * ((1 << 64) | 1);
+                }
+                else {
+                    //Transfer
+                    _packedAddressData[to] += quantity;
+                    _packedAddressData[from] -= quantity;
+                }
+            } 
+            else {
+                // Burn
+                _packedAddressData[from] += (quantity << 128) - quantity;
+            }
         }
         super._afterTokenTransfers(from, to, startTokenId, quantity);
     }

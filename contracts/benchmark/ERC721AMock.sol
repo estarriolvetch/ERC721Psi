@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 // Creators: Chiru Labs
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
+import '@openzeppelin/contracts/utils/ReentrancyGuard.sol';
 import "erc721a/contracts/ERC721A.sol";
 import '@openzeppelin/contracts/utils/Strings.sol';
 import 'hardhat/console.sol';
@@ -31,9 +31,9 @@ contract ERC721AMock is ERC721A {
     function safeMint(
         address to,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) public {
-        _safeMint(to, quantity, _data);
+        _safeMint(to, quantity, data);
     }
 
     function benchmarkOwnerOf(uint256 tokenId) public returns (address owner) {

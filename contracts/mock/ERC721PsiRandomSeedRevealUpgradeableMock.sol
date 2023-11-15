@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 import '../extension/ERC721PsiRandomSeedRevealUpgradeable.sol';
 import "hardhat/console.sol";
@@ -19,16 +19,21 @@ contract ERC721PsiRandomSeedRevealUpgradeableMock is ERC721PsiRandomSeedRevealUp
             subId = _subId;
         }
 
-    function initialize(
-        string memory name_, 
-        string memory symbol_
-    ) initializer external {
-        __ERC721Psi_init(name_, symbol_);
+    function initialize(string memory name_, string memory symbol_) public initializerERC721Psi  {
+        __ERC721PsiRandomSeedRevealMock_init(name_, symbol_);
     }
+    
+    function __ERC721PsiRandomSeedRevealMock_init(string memory name_, string memory symbol_) internal onlyInitializingERC721Psi {
+        __ERC721Psi_init_unchained(name_, symbol_);
+        __ERC721PsiRandomSeedRevealMock_init_unchained(name_, symbol_);
+    }
+    
+    function __ERC721PsiRandomSeedRevealMock_init_unchained(string memory, string memory) internal onlyInitializingERC721Psi {}
 
     function _keyHash() internal override returns (bytes32){
         return bytes32(0);
     }
+
     function _subscriptionId() internal override returns (uint64) {
         return subId;
     }
@@ -48,9 +53,9 @@ contract ERC721PsiRandomSeedRevealUpgradeableMock is ERC721PsiRandomSeedRevealUp
     function safeMint(
         address to,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) public {
-        _safeMint(to, quantity, _data);
+        _safeMint(to, quantity, data);
     }
 
     function getBatchHead(
@@ -79,6 +84,4 @@ contract ERC721PsiRandomSeedRevealUpgradeableMock is ERC721PsiRandomSeedRevealUp
         uint256 gasAfter = gasleft();
         console.log(gasBefore - gasAfter);
     }
-
-    
 }

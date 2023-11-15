@@ -10,24 +10,23 @@
                                             
  */
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 
 import "../ERC721Psi.sol";
-import "solidity-bits/contracts/BitMaps.sol";
-
+import "solady/src/utils/LibBitmap.sol";
 
 abstract contract ERC721PsiBatchMetaData is ERC721Psi {
-    using BitMaps for BitMaps.BitMap;
-    BitMaps.BitMap private _metaDataBatchHead;
+    using LibBitmap for LibBitmap.Bitmap;
+    LibBitmap.Bitmap private _metaDataBatchHead;
 
     function _safeMint(
         address to,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) internal virtual override {
         _metaDataBatchHead.set(_nextTokenId());
-        super._safeMint(to, quantity, _data);
+        super._safeMint(to, quantity, data);
     }
 
     /**
@@ -36,6 +35,6 @@ abstract contract ERC721PsiBatchMetaData is ERC721Psi {
      *  The returned tokenId will remain the same after the token transfer.
      */
     function _getMetaDataBatchHead(uint256 tokenId) internal view returns (uint256 tokenIdMetaDataBatchHead) {
-        tokenIdMetaDataBatchHead = _metaDataBatchHead.scanForward(tokenId);
+        tokenIdMetaDataBatchHead = _metaDataBatchHead.findLastSet(tokenId);
     }
 }
