@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 import '../extension/ERC721PsiRandomSeedUpgradeable.sol';
 import "hardhat/console.sol";
@@ -19,12 +19,16 @@ contract ERC721PsiRandomSeedUpgradeableMock is ERC721PsiRandomSeedUpgradeable {
             subId = _subId;
         }
 
-    function initialize(
-        string memory name_, 
-        string memory symbol_
-    ) initializer external {
-        __ERC721Psi_init(name_, symbol_);
+    function initialize(string memory name_, string memory symbol_) public initializerERC721Psi  {
+        __ERC721PsiRandomSeedMock_init(name_, symbol_);
     }
+
+    function __ERC721PsiRandomSeedMock_init(string memory name_, string memory symbol_) internal onlyInitializingERC721Psi {
+        __ERC721Psi_init_unchained(name_, symbol_);
+        __ERC721PsiRandomSeedMock_init_unchained(name_, symbol_);
+    }
+    
+    function __ERC721PsiRandomSeedMock_init_unchained(string memory, string memory) internal onlyInitializingERC721Psi {}
 
     function _keyHash() internal override returns (bytes32){
         return bytes32(0);
@@ -48,9 +52,9 @@ contract ERC721PsiRandomSeedUpgradeableMock is ERC721PsiRandomSeedUpgradeable {
     function safeMint(
         address to,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) public {
-        _safeMint(to, quantity, _data);
+        _safeMint(to, quantity, data);
     }
 
     function getBatchHead(
@@ -65,12 +69,10 @@ contract ERC721PsiRandomSeedUpgradeableMock is ERC721PsiRandomSeedUpgradeable {
         return _getMetaDataBatchHead(tokenId);
     }
 
-    function benchmarkOwnerOf(uint256 tokenId) public returns (address owner) {
+    function benchmarkOwnerOf(uint256 tokenId) public view returns (address owner) {
         uint256 gasBefore = gasleft();
         owner = ownerOf(tokenId);
         uint256 gasAfter = gasleft();
         console.log(gasBefore - gasAfter);
-    }
-
-    
+    }   
 }

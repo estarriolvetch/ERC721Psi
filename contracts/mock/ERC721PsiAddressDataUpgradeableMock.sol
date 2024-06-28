@@ -1,18 +1,19 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 import '../extension/ERC721PsiAddressDataUpgradeable.sol';
 import "hardhat/console.sol";
 
 
 contract ERC721PsiAddressDataUpgradeableMock is ERC721PsiAddressDataUpgradeable {
-    function initialize(
-        string memory name_, 
-        string memory symbol_
-    ) initializer external {
-        __ERC721Psi_init(name_, symbol_);
+    
+    function __ERC721PsiAddressDataMock_init(string memory name_, string memory symbol_) internal onlyInitializingERC721Psi {
+        __ERC721Psi_init_unchained(name_, symbol_);
+        __ERC721PsiAddressDataMock_init_unchained(name_, symbol_);
     }
+    
+    function __ERC721PsiAddressDataMock_init_unchained(string memory, string memory) internal onlyInitializingERC721Psi {}
 
     function baseURI() public view returns (string memory) {
         return _baseURI();
@@ -29,9 +30,9 @@ contract ERC721PsiAddressDataUpgradeableMock is ERC721PsiAddressDataUpgradeable 
     function safeMint(
         address to,
         uint256 quantity,
-        bytes memory _data
+        bytes memory data
     ) public {
-        _safeMint(to, quantity, _data);
+        _safeMint(to, quantity, data);
     }
 
     function getBatchHead(
@@ -40,7 +41,16 @@ contract ERC721PsiAddressDataUpgradeableMock is ERC721PsiAddressDataUpgradeable 
         _getBatchHead(tokenId);
     }
 
-    function benchmarkOwnerOf(uint256 tokenId) public returns (address owner) {
+    function numberMinted(address owner) 
+        public 
+        view 
+        returns (uint) 
+    {
+        if (owner == address(0)) revert BalanceQueryForZeroAddress();
+        return _numberMinted(owner);   
+    }
+
+    function benchmarkOwnerOf(uint256 tokenId) public view returns (address owner) {
         uint256 gasBefore = gasleft();
         owner = ownerOf(tokenId);
         uint256 gasAfter = gasleft();
