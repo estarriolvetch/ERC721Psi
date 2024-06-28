@@ -84,6 +84,12 @@ PRs on documentation, test cases, and contract improvements are welcome.
 If your project uses ERC721Psi, we'd like know more about it!
 
 Feel free to DM [0xEstarriol](https://twitter.com/0xEstarriol) to share your project.
+
+### Library built on ERC721PSi
+ - https://github.com/Black-Eyed-Creatures/ERC404B
+
+
+### NFT Project
 - Shellz Orb: [opensea](https://opensea.io/collection/shellzorb)
 - Boxcat Planet: [opensea](https://opensea.io/collection/boxcatplanet-official)
 - Medieval Adventurer: [twitter](https://twitter.com/DaoMedieval), [opensea](https://opensea.io/collection/medieval-adventurer/)
